@@ -56,11 +56,11 @@ def const(
 
         #------------------------------------------------------------------------------#
         
-        #const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
-        #const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
+        const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
+        const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
         
-        const.str_dir = "/home/elliot/Documents/GitHub/Collisionality_v2/data/load/"
-        const.str_save = "/home/elliot/Documents/GitHub/Collisionality_v2/data/save/"
+        #const.str_dir = "/home/elliot/Documents/GitHub/Collisionality_v2/data/load/"
+        #const.str_save = "/home/elliot/Documents/GitHub/Collisionality_v2/data/save/"
 
         if enc == 0:
                 L = len(valid_enc)
@@ -75,7 +75,6 @@ def const(
                 encounter[0] = enc
                 const.encounter = []
                 const.encounter.append('E' + str(int(encounter[0])))
-        print(const.encounter)
         const.num_of_encs = L
         const.encounter_names = []
 
@@ -84,17 +83,19 @@ def const(
                 const.encounter_names.append(val+'_protons.csv')
                 const.encounter_names.append(val+'_alphas.csv')
 
-        const.spacecraft_names = []
-        const.spacecraft_names.append('PSP.csv')
-        const.spacecraft_names.append('Wind_Orbit.csv')
-        const.spacecraft_names.append('PSP_Orbit.csv')
-        const.spacecraft_names.append('Wind_Outside_Range_Hour.csv')
-        const.spacecraft_names.append('Wind_Outside_Range_Min.csv')
+        const.sc_names = []
+        const.sc_names.append('PSP.csv')
+        const.sc_names.append('Wind_Orbit.csv')
+        const.sc_names.append('PSP_Orbit.csv')
+        const.sc_names.append('Wind_Outside_Range_Hour.csv')
+        const.sc_names.append('Wind_Outside_Range_Min.csv')
+
+        const.num_of_sc = len(const.sc_names)
 
         
         #------------------------------------------------------------------------------#
 
-        const.num_files = len(const.encounter_names)+len(const.spacecraft_names)
+        const.num_files = len(const.encounter_names)+len(const.sc_names)
 
         const.mm_units= {}
                 
@@ -104,14 +105,14 @@ def const(
         const.mm_units[2] = [0,5,1,8,8,5,5,5,1,8,6,7]
         const.mm_units[3] = [0,5,1,8,8,5,5,5,1,8,6,7]
 
-        const.spdf_units = {}
+        const.sc_units = {}
 
-        const.spdf_units[0] = [0,0,0,0,3,3,3,3,2,2,2,2,0,0,0,0]
-        const.spdf_units[1] = [0,0,0,0,3,3,3,3,2,0,0,0,0]
+        const.sc_units[0] = [0,0,0,0,3,3,3,3,2,2,2,2,0,0,0,0]
+        const.sc_units[1] = [0,0,0,0,3,3,3,3,2,0,0,0,0]
 
-        const.spdf_units[2] = [0,0,0,0,0,0]
-        const.spdf_units[3] = const.spdf_units[1]
-        const.spdf_units[4] = [0,9,9,9,9,9,9,9,9,2,10,10,2,11,14,12,13,11,11,11]
+        const.sc_units[2] = [0,0,0,0,0,0]
+        const.sc_units[3] = const.sc_units[1]
+        const.sc_units[4] = [0,9,9,9,9,9,9,9,9,2,10,10,2,11,14,12,13,11,11,11]
 
         const.var_max =[(10**30),density_max,speed_max,b_field_max,temp_max,chi_squared_max, dr_max, dv_max, dT_perp_max, bmag_max,v_gse_max,dens_add_max,nanp_max,presure_max,c_max]
                 
