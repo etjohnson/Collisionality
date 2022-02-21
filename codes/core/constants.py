@@ -56,8 +56,11 @@ def const(
 
         #------------------------------------------------------------------------------#
         
-        const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
-        const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
+        #const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
+        #const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
+        
+        const.str_dir = "/home/elliot/Documents/GitHub/Collisionality_v2/data/load/"
+        const.str_save = "/home/elliot/Documents/GitHub/Collisionality_v2/data/save/"
 
         if enc == 0:
                 L = len(valid_enc)

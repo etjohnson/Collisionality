@@ -67,7 +67,9 @@ if const.scrub == True:
         k = -1
         for i in const.encounter_names[x]:
             l = l + 1
-            for j in mm_data[const.encounter[x]][i].keys():
+            val = str(const.encounter[x])
+            print(val)
+            for j in mm_data['E4'][i].keys():
                k = k + 1
                val = const.mm_units[l][k]
                mm_data[const.encounter[x]][i][j] = scrub(mm_data[const.encounter[x]][i][j],const.var_min[val],const.var_max[val])

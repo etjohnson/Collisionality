@@ -15,7 +15,7 @@ def encounter_import(
     
         for j in range(2):
             val = str(const.encounter[i] + '/' + const.encounter_names[j +2*i])
-            files[const.encounter_names[j]] = file_import(val, const.str_dir)
+            files[const.encounter[i]][const.encounter_names[j]] = file_import(val, const.str_dir)
     
     return files
 
@@ -49,22 +49,22 @@ def file_import(
     #---#
 
     #---#
+	
+	print(load_location)
+		
+	for arg_name in ("load_location","str_dir"):
+		val = locals()[arg_name]
+		if not isinstance(arg_name, str):
+			raise ValueError(
+				f"Argument '{val}' should be a string,"
+				f"instead got '{val.type}'."
+		)
 
-    
-    for arg_name in ("load_location","str_dir"):
-        val = locals()[arg_name]
-        if not isinstance(arg_name, str):
-            raise ValueError(
-                f"Argument '{val}' should be a string,"
-                f"instead got '{val.type}'."
-                )
-
-    print(str_dir+load_location)
-    
-    data = pd.read_csv(str_dir+load_location)
-
-    result = {}
-    for key in data.keys():
-        result[key] = np.array(data[key])
-        
-    return result
+	print(str_dir+load_location)
+		
+	data = pd.read_csv(str_dir+load_location)
+	result = {}
+	for key in data.keys():
+		result[key] = np.array(data[key])
+		    
+	return result
