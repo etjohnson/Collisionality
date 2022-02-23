@@ -9,6 +9,7 @@ from core import data_import as df
 from core import tictoc as tt
 
 from features import latlong as lalo
+from features import scalar_temps as sc_temp
 from features import theta_radial as the_rad
 
 tt.tic()
@@ -103,14 +104,18 @@ else:
 #Combine files if nessesory
 tot_len_proton = 0
 tot_len_alpha = 0
+tot_len_spc = 0
 for x in range(dum_len):
     encount = const.encounter[x]
     for y in range(1):
         tot_len_proton = tot_len_proton + len(mm_data[encount][const.encounter_names[2*x + y]]['time']) 
     for y in range(1):
-        tot_len_alpha = tot_len_alpha + len(mm_data[encount][const.encounter_names[2*x]]['time'])
+        tot_len_alpha = tot_len_alpha + len(mm_data[encount][const.encounter_names[x + 2*y]]['time'])
+    for y in const.encounter_names:    
+    	tot_len_spc = tot_len_spc + len(sp_data[encount][y]['time'])
 
 solar_data = {}
+spc_data = {}
 for x in range(dum_len):
     encount = const.encounter[x]
     solar_data['proton'] = {}
@@ -123,8 +128,25 @@ for x in range(dum_len):
                 solar_data['proton'][z][w] = mm_data[encount][const.encounter_names[y + 2*x]][z][w]
                 solar_data['alpha'][z][w] = mm_data[encount][const.encounter_names[y + 2*x]][z][w]
 
-print(solar_data)            
+	for y in const.encounter_names:
+		spc_data[y] = np.zeros(tot_len_spc)
+		for z in sp_data[encounter][y].keys():
+			spc_data['proton'][z] = np.zeros(tot_len_spc)
+			for w in range(len(sp_data[encount][y][z])):
+				spc_data['proton'][z][w] = sp_data[encount][y][z][w]
+			
 
+print(solar_data)   
+print(spc_data)         
+
+
+#Generate temperatures
+scalar temps = {}
+for x in range(dum_len):
+	encounter = const.encounter[x]
+	scalar_temps['proton'] = {}
+	scalar_temps['alpha'] = {}
+	
     
 
 

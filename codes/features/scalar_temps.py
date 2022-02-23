@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from core.constants import *
+from core.constants import const
 
 def generate_scalar_temps(
     data,
