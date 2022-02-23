@@ -99,20 +99,25 @@ if const.scrub == True:
     print('Data Scrub Complete')
 else:
     print('Note: Data scrub suppressed.')
+print('\n')
 
 
 #Combine files if nessesory
+print('Generating data file...')
 tot_len_proton = 0
 tot_len_alpha = 0
 tot_len_spc = 0
 for x in range(dum_len):
     encount = const.encounter[x]
     for y in range(1):
-        tot_len_proton = tot_len_proton + len(mm_data[encount][const.encounter_names[2*x + y]]['time']) 
+        tot_len_proton = tot_len_proton + len(mm_data[encount][const.encounter_names[2*x + y]]['time'])
+        print(tot_len_proton)
     for y in range(1):
-        tot_len_alpha = tot_len_alpha + len(mm_data[encount][const.encounter_names[x + 2*y]]['time'])
-    for y in const.encounter_names:    
-    	tot_len_spc = tot_len_spc + len(sp_data[encount][y]['time'])
+        tot_len_alpha = tot_len_alpha + len(mm_data[encount][const.encounter_names[2*x]]['time'])
+        print(tot_len_alpha)
+    for y in range(len(const.sc_names)):
+        tot_len_spc = tot_len_spc + len(sc_data[encount][const.sc_names[y]]['time'])
+        print(tot_len_spc)
 
 solar_data = {}
 spc_data = {}
@@ -120,6 +125,7 @@ for x in range(dum_len):
     encount = const.encounter[x]
     solar_data['proton'] = {}
     solar_data['alpha'] = {}
+    
     for y in range(2):
         for z in mm_data[encount][const.encounter_names[y + 2*x]].keys():
             solar_data['proton'][z] = np.zeros(tot_len_proton)
@@ -128,28 +134,27 @@ for x in range(dum_len):
                 solar_data['proton'][z][w] = mm_data[encount][const.encounter_names[y + 2*x]][z][w]
                 solar_data['alpha'][z][w] = mm_data[encount][const.encounter_names[y + 2*x]][z][w]
 
-	for y in const.encounter_names:
-		spc_data[y] = np.zeros(tot_len_spc)
-		for z in sp_data[encounter][y].keys():
-			spc_data['proton'][z] = np.zeros(tot_len_spc)
-			for w in range(len(sp_data[encount][y][z])):
-				spc_data['proton'][z][w] = sp_data[encount][y][z][w]
-			
-
+    for y in range(len(const.sc_names)):
+        spc_data[const.sc_names[y]] = {}
+        for z in sc_data[encount][const.sc_names[y]].keys():
+            spc_data[const.sc_names[y]][z] = np.zeros(tot_len_spc)
+            for w in range(len(sc_data[encount][const.sc_names[y]][z])):
+                spc_data[const.sc_names[y]][z][w] = sc_data[encount][const.sc_names[y]][z][w]
+                                
 print(solar_data)   
 print(spc_data)         
 
-
 #Generate temperatures
-scalar temps = {}
+print('Generating temperature file...')
+scalar_temps = {}
 for x in range(dum_len):
-	encounter = const.encounter[x]
-	scalar_temps['proton'] = {}
-	scalar_temps['alpha'] = {}
-	
+    encounter = const.encounter[x]
+    scalar_temps['proton'] = {}
+    scalar_temps['alpha'] = {}
+
     
 
-
+print('Note: Files have been generated and loaded in.')
 
 
 tt.toc()
