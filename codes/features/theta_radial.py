@@ -3,7 +3,8 @@ import numpy as np
 from core.constants import const
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-from core.smooth import smooth
+
+from features.smooth import smooth
 
 def theta_radial(
         time_,
@@ -83,10 +84,12 @@ def theta_radial(
             # Explicit Euler Method
             if theta[j] > 15:
                 s[j][0] = 15
+                test_s_s = 15
             else:
                 s[j][0] = theta[j]
-
-
+                test_s_s = theta[j]
+            
+                
             for k in range(0,len(R) - 1):
                 Tp = (tp0[j])*(R[k]**tppower)
                 ndp = (np0[j])*(R[k]**nppower)
@@ -97,11 +100,12 @@ def theta_radial(
                 #print('Equation 1', equ_one)
                 equ_two = (9+ np.log(((Tp**1.5)/(ndp**0.5))*((ua + s[j][k])/(za*(1 + ua)))*((1 +((za*za*nap)/(s[j][k])))**(-0.5))))
                 #print('Equation 2', equ_two)
-                s[j][k + 1] = s[j][k] + h*equ_one*equ_two
+                test_s_s = test_s_s + h*equ_one*equ_two
+                #s[j][k + 1] = s[j][k] + h*equ_one*equ_two
                 #print('s:', s[i][k+1])
 
-            final_aps[j] = s[j][len(R)-1]
-            plt.plot(R, s[j])
+            final_aps[j] = test_s_s#s[j][len(R)-1]
+            #plt.plot(R, s[j])
 
         dumvarstr = str(const.str_dir + '/Predict/Predict' + str(i)+ '.txt')
         np.savetxt(dumvarstr, final_aps, fmt="%s")
