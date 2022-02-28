@@ -6,7 +6,7 @@ from scipy.stats import norm
 
 from features.smooth import smooth
 
-def theta_radial(
+def tr(
         time_,
         np0_,
         tp0_,

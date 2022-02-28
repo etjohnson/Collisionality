@@ -9,7 +9,7 @@ from core import data_import as df
 from core import tictoc as tt
 
 from features import latlong as lalo
-from features import scalar_temps as sc_temp
+from features import gen_scalars as sc_gen
 from features import theta_radial as the_rad
 
 tt.tic()
@@ -111,50 +111,57 @@ for x in range(dum_len):
     encount = const.encounter[x]
     for y in range(1):
         tot_len_proton = tot_len_proton + len(mm_data[encount][const.encounter_names[2*x + y]]['time'])
-        print(tot_len_proton)
     for y in range(1):
-        tot_len_alpha = tot_len_alpha + len(mm_data[encount][const.encounter_names[2*x]]['time'])
-        print(tot_len_alpha)
+        tot_len_alpha = tot_len_alpha + len(mm_data[encount][const.encounter_names[2*x + 1]]['time'])
     for y in range(len(const.sc_names)):
         tot_len_spc = tot_len_spc + len(sc_data[encount][const.sc_names[y]]['time'])
-        print(tot_len_spc)
 
+p = 'proton'
+a = 'alpha'
 solar_data = {}
 spc_data = {}
+adjust = 0
 for x in range(dum_len):
     encount = const.encounter[x]
-    solar_data['proton'] = {}
-    solar_data['alpha'] = {}
-    
-    for y in range(2):
+    solar_data[p] = {}
+    solar_data[a] = {}
+    for y in range(1):
         for z in mm_data[encount][const.encounter_names[y + 2*x]].keys():
-            solar_data['proton'][z] = np.zeros(tot_len_proton)
-            solar_data['alpha'][z] = np.zeros(tot_len_alpha)
+            solar_data[p][z] = []
             for w in range(len(mm_data[encount][const.encounter_names[y + 2*x]][z])):
-                solar_data['proton'][z][w] = mm_data[encount][const.encounter_names[y + 2*x]][z][w]
-                solar_data['alpha'][z][w] = mm_data[encount][const.encounter_names[y + 2*x]][z][w]
+                solar_data[p][z].append(mm_data[encount][const.encounter_names[2*x + y]][z][w])
+        for z in mm_data[encount][const.encounter_names[1 + 2*x]].keys():
+            solar_data[a][z] = []
+            for w in range(len(mm_data[encount][const.encounter_names[1 + 2*x]][z])):
+                solar_data[a][z].append(mm_data[encount][const.encounter_names[2*x + 1]][z][w])
 
     for y in range(len(const.sc_names)):
         spc_data[const.sc_names[y]] = {}
         for z in sc_data[encount][const.sc_names[y]].keys():
-            spc_data[const.sc_names[y]][z] = np.zeros(tot_len_spc)
+            spc_data[const.sc_names[y]][z] = []
             for w in range(len(sc_data[encount][const.sc_names[y]][z])):
-                spc_data[const.sc_names[y]][z][w] = sc_data[encount][const.sc_names[y]][z][w]
-                                
-print(solar_data)   
-print(spc_data)         
+                spc_data[const.sc_names[y]][z].append(sc_data[encount][const.sc_names[y]][z][w])
+                                        
 
-#Generate temperatures
+#Generate temperatures and velocity magnitudes
+print('Generating velocity magnitudes...')
+scalar_velocity = sc_gen.scalar_velocity(solar_data)
 print('Generating temperature file...')
-scalar_temps = {}
-for x in range(dum_len):
-    encounter = const.encounter[x]
-    scalar_temps['proton'] = {}
-    scalar_temps['alpha'] = {}
-
-    
-
+scalar_temps = sc_gen.scalar_temps(solar_data)
 print('Note: Files have been generated and loaded in.')
+
+
+#
+time = solar_data[p]['time']
+density_p = solar_data[p]['np1']
+temp = scalar_temps['proton_1_k']
+speed = solar_data[p]['v_mag']
+density_a = np.interp(time,solar_data[a]['time'], solar_data[a]['na'])
+theta = np.interp(time, solar_data[a]['time'], scalar_temps['theta_ap'])
+wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']),fill_value=1,dtype=int)
+psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
+
+final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, True)
 
 
 tt.toc()
