@@ -49,18 +49,18 @@ def const(
                              
         const.error_files = False 
         const.output = False
-        const.scrub = False
+        const.scrub = True
                 
         const.x_dim = 10
         const.y_dim = 10
 
         #------------------------------------------------------------------------------#
         
-        const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
-        const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
+        #const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
+        #const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
         
-        #const.str_dir = "/home/elliot/Documents/GitHub/Collisionality_v2/data/load/"
-        #const.str_save = "/home/elliot/Documents/GitHub/Collisionality_v2/data/save/"
+        const.str_dir = "/home/elliot/Documents/GitHub/Collisionality_v2/data/load/"
+        const.str_save = "/home/elliot/Documents/GitHub/Collisionality_v2/data/save/"
 
         if enc == 0:
                 L = len(valid_enc)

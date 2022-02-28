@@ -13,6 +13,8 @@ from features import gen_scalars as sc_gen
 from features import theta_radial as the_rad
 
 tt.tic()
+p = 'proton'
+a = 'alpha'
 valid_enc = [4,6,7]
 print('Current loaded encounters:', valid_enc, '\n')
 
@@ -104,20 +106,6 @@ print('\n')
 
 #Combine files if nessesory
 print('Generating data file...')
-tot_len_proton = 0
-tot_len_alpha = 0
-tot_len_spc = 0
-for x in range(dum_len):
-    encount = const.encounter[x]
-    for y in range(1):
-        tot_len_proton = tot_len_proton + len(mm_data[encount][const.encounter_names[2*x + y]]['time'])
-    for y in range(1):
-        tot_len_alpha = tot_len_alpha + len(mm_data[encount][const.encounter_names[2*x + 1]]['time'])
-    for y in range(len(const.sc_names)):
-        tot_len_spc = tot_len_spc + len(sc_data[encount][const.sc_names[y]]['time'])
-
-p = 'proton'
-a = 'alpha'
 solar_data = {}
 spc_data = {}
 adjust = 0
@@ -142,13 +130,44 @@ for x in range(dum_len):
             for w in range(len(sc_data[encount][const.sc_names[y]][z])):
                 spc_data[const.sc_names[y]][z].append(sc_data[encount][const.sc_names[y]][z][w])
                                         
+#Generate fill values
+solar_lens = []
+spc_lens = []
+for x in solar_data.keys():
+	solar_lens.append(len(solar_data[x]['time']))
+for x in spc_data.keys():
+	spc_lens.append(len(spc_data[x]['time']))
 
+solar_len_max = max(solar_lens)
+spc_len_max = max(spc_lens)
+
+if solar_len_max > spc_len_max or solar_len_max == spc_len_max:
+	index_loc = solar_lens.index(solar_len_max)
+	t_ = solar_data[const.encounter_names[index_loc]]['time']
+elif spc_len_max > solar_len_max:
+	index_loc = spc_lens.index(spc_len_max)
+	t_ = spc_data[const.sc_names[index_loc]]['time']
+else:
+	raise Exception('Fatal Error: Length of arrays could not be determined.')
+
+for x in solar_data.keys():
+	xp = solar_data[x]['time']
+	for y in solar_data[x].keys():
+		fp = solar_data[x][y]
+		solar_data[x][y] = np.interp(t_,xp,fp)
+for x in spc_data.keys():
+	xp = spc_data[x]['time']
+	for y in spc_data[x].keys():
+		fp = spc_data[x][y]
+		spc_data[x][y] = np.interp(t_,xp,fp)
+		
 #Generate temperatures and velocity magnitudes
 print('Generating velocity magnitudes...')
 scalar_velocity = sc_gen.scalar_velocity(solar_data)
 print('Generating temperature file...')
 scalar_temps = sc_gen.scalar_temps(solar_data)
-print('Note: Files have been generated and loaded in.')
+print('Note: Files have been generated and loaded in.','\n')
+
 
 
 #
@@ -159,7 +178,7 @@ speed = solar_data[p]['v_mag']
 density_a = np.interp(time,solar_data[a]['time'], solar_data[a]['na'])
 theta = np.interp(time, solar_data[a]['time'], scalar_temps['theta_ap'])
 wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']),fill_value=1,dtype=int)
-psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
+psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['radius'])
 
 final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, True)
 

@@ -58,7 +58,7 @@ def tr(
             theta[i] = theta_[i]
             
         if fast == True:
-            sum_range =  5000
+            sum_range =  10
         else:
             sum_range = duration
 
@@ -107,8 +107,6 @@ def tr(
             final_aps[j] = test_s_s#s[j][len(R)-1]
             #plt.plot(R, s[j])
 
-        dumvarstr = str(const.str_dir + '/Predict/Predict' + str(i)+ '.txt')
-        np.savetxt(dumvarstr, final_aps, fmt="%s")
 
         plt.title('Theta against Radius')
         plt.xlabel('r [Au]')
