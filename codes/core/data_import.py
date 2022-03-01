@@ -67,3 +67,11 @@ def file_import(
         result[key] = np.array(data[key])
 
     return result
+    
+def epoch_time(
+        epoch_time,
+):
+    import datetime
+    res = datetime.datetime.fromtimestamp(epoch_time)
+
+    return res

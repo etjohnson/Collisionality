@@ -5,8 +5,8 @@ def const(
         valid_enc,
 ):
         #Min and Max Values#
-        density_max = 10*25
-        density_min = 0
+        density_max = 10**25
+        density_min = 10**-6
 
         speed_max = 10**3
         speed_min = 0
@@ -49,7 +49,7 @@ def const(
                              
         const.error_files = False 
         const.output = False
-        const.scrub = False
+        const.scrub = True
                 
         const.x_dim = 10
         const.y_dim = 10
@@ -97,13 +97,13 @@ def const(
 
         const.num_files = len(const.encounter_names)+len(const.sc_names)
 
-        const.mm_units= {}
+        const.data_units= {}
                 
-        const.mm_units[0] = [0,1,1,2,2,2,3,3,3,2,4,4,4,4] 
-        const.mm_units[1] = [0,1,2,2,2,3,3,3,4,4]
+        const.data_units[0] = [0,1,1,2,2,2,3,3,3,2,4,4,4,4] 
+        const.data_units[1] = [0,1,2,2,2,3,3,3,4,4]
                 
-        const.mm_units[2] = [0,5,1,8,8,5,5,5,1,8,6,7]
-        const.mm_units[3] = [0,5,1,8,8,5,5,5,1,8,6,7]
+        const.data_units[2] = [0,5,1,8,8,5,5,5,1,8,6,7]
+        const.data_units[3] = [0,5,1,8,8,5,5,5,1,8,6,7]
 
         const.sc_units = {}
 
