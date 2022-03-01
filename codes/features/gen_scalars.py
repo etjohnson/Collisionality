@@ -1,8 +1,8 @@
 import sys
 import numpy as np
-from core.constants import *
+from core.constants import const
 
-def generate_scalar_temps(
+def scalar_temps(
     data,
 ):
     
@@ -14,8 +14,8 @@ def generate_scalar_temps(
         for key in file:
             key_names[file] = data[file].keys()
 
-    proton = const.encounter_names[0]
-    alpha = const.encounter_names[1]
+    proton = 'proton'
+    alpha = 'alpha'
     
     factor = 11604
     
@@ -49,8 +49,7 @@ def generate_scalar_temps(
         result[result_keys[2]][i] = (2*data[alpha]['Ta_perp'][i] + data[alpha]['Trat'][i])/3
         result[result_keys[3]][i] = result[result_keys[2]][i]/result[result_keys[0]][i]
         result[result_keys[6]][i] = data[alpha]['Ta_perp'][i]/data[alpha]['Trat'][i]      
-        result['alpha_k'][i] = result[result_keys[2]][i]*factor
-         
+        result['alpha_k'][i] = result[result_keys[2]][i]*factor         
 
         if data[proton]['np1'][i] == 0:
             result[result_keys[4]][i] = 0
@@ -58,4 +57,24 @@ def generate_scalar_temps(
             result[result_keys[4]][i] = data[alpha]['na'][i]/data[proton]['np1'][i]
           
     return result
+
+def scalar_velocity(
+    data,
+):
+
+    p = 'proton'
+    a = 'alpha'
+
+    data[p]['v_mag'] = []
+    data[a]['v_mag'] = []
+
+    L_p = len(data[p]['time'])
+    L_a = len(data[a]['time'])
+    
+    for i in range(L_p):
+        data[p]['v_mag'].append(np.sqrt((data[p]['vp1_x'][i])**2+(data[p]['vp1_y'][i])**2+(data[p]['vp1_z'][i])**2))
+    for i in range(L_a):       
+        data[a]['v_mag'].append(np.sqrt(data[a]['va_x'][i])**2+(data[a]['va_y'][i])**2+(data[a]['va_z'][i])**2)
+    
+    return data
     
