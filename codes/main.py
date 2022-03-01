@@ -108,28 +108,39 @@ print('\n')
 print('Generating data file...')
 solar_data = {}
 spc_data = {}
-adjust = 0
-for x in range(dum_len):
+solar_data[p] = {}
+solar_data[a] = {}
+for x in range(1):
     encount = const.encounter[x]
-    solar_data[p] = {}
-    solar_data[a] = {}
     for y in range(1):
         for z in mm_data[encount][const.encounter_names[y + 2*x]].keys():
             solar_data[p][z] = []
-            for w in range(len(mm_data[encount][const.encounter_names[y + 2*x]][z])):
-                solar_data[p][z].append(mm_data[encount][const.encounter_names[2*x + y]][z][w])
         for z in mm_data[encount][const.encounter_names[1 + 2*x]].keys():
             solar_data[a][z] = []
-            for w in range(len(mm_data[encount][const.encounter_names[1 + 2*x]][z])):
-                solar_data[a][z].append(mm_data[encount][const.encounter_names[2*x + 1]][z][w])
-
     for y in range(len(const.sc_names)):
         spc_data[const.sc_names[y]] = {}
         for z in sc_data[encount][const.sc_names[y]].keys():
             spc_data[const.sc_names[y]][z] = []
-            for w in range(len(sc_data[encount][const.sc_names[y]][z])):
-                spc_data[const.sc_names[y]][z].append(sc_data[encount][const.sc_names[y]][z][w])
-                                        
+
+for x in range(dum_len):
+	encount = const.encounter[x]
+	for y in range(1):
+		for z in solar_data[p].keys():
+			for w in range(len(mm_data[encount][const.encounter_names[y + 2*x]][z])):
+				solar_data[p][z].append(mm_data[encount][const.encounter_names[y + 2*x]][z][w])
+		for z in solar_data[a].keys():
+			for w in range(len(mm_data[encount][const.encounter_names[2*x + 1]][z])):
+				solar_data[a][z].append(mm_data[encount][const.encounter_names[2*x + 1]][z][w])
+	for y in const.sc_names:
+		for z in spc_data[y].keys():
+			for w in range(len(sc_data[encount][y][z])):
+				spc_data[y][z].append(sc_data[encount][y][z][w])
+
+plt.plot(solar_data[p]['time'], solar_data[p]['np1'])
+plt.plot(solar_data[p]['time'], solar_data[p]['np2'])
+plt.show()
+
+                                      
 #Generate fill values
 solar_lens = []
 spc_lens = []
@@ -169,6 +180,9 @@ scalar_temps = sc_gen.scalar_temps(solar_data)
 print('Note: Files have been generated and loaded in.','\n')
 
 
+plt.plot(solar_data[p]['time'], solar_data[p]['np1'])
+plt.plot(solar_data[p]['time'], solar_data[p]['np2'])
+plt.show()
 
 #
 time = solar_data[p]['time']
