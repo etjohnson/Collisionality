@@ -180,7 +180,7 @@ theta = np.interp(time, solar_data[a]['time'], scalar_temps['theta_ap'])
 wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']),fill_value=1,dtype=int)
 psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['radius'])
 
-final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, True)
+#final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, True)
 
 
 tt.toc()
