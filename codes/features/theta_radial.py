@@ -7,134 +7,113 @@ from scipy.stats import norm
 from features.smooth import smooth
 
 def tr(
-        time_,
-        np0_,
-        tp0_,
-        vrp0_,
-        na0_,
-        theta_,
-        wind_radius,
-        psp_radius,
-        fast = True,
+    time_,
+    np0_,
+    tp0_,
+    vrp0_,
+    na0_,
+    theta_,
+    wind_radius,
+    psp_radius,
+    fast = True,
 ):
-        duration = len(time_)
-        
-        print('Radial prediction computing: Note time for computation may be excessive.')
+    duration = len(time_)
 
-        # Normalisation Constant
-        Norm =  2.6*(10**1)
+    # Normalisation Constant
+    Norm =  2.6*(10**1)
 
-        # Initial proton conidition and decay power.
-        np0 = np0_
-        nppower = -1.8
+    # Initial proton conidition and decay power.
+    np0 = np0_
+    nppower = -1.8
 
-        #Initial proton tempreture and decay power.
-        tp0 = tp0_
-        tppower = -0.74
+    #Initial proton tempreture and decay power.
+    tp0 = tp0_
+    tppower = -0.74
 
-        # Average velocity and decay power
-        vrp0 = vrp0_
-        vrppower = -0.2
+    # Average velocity and decay power
+    vrp0 = vrp0_
+    vrppower = -0.2
 
-        #Alpha particle parameters
-        ua = 4
-        za = 2
+    #Alpha particle parameters
+    ua = 4
+    za = 2
 
-        # Inital alpha condition and decay power.
-        na0 = na0_
-        napower =  -1.8
+    # Inital alpha condition and decay power.
+    na0 = na0_
+    napower =  -1.8
 
-        n = np.zeros(duration)
-        
-        for i in range(duration):
+    n = np.zeros(duration)
+
+    for i in range(duration):
+        if np0[i] == 0:
+            n[i] = 0
+        else:
             n[i] = na0[i]/np0[i]
 
-        #Compute#
+    #Compute#
 
-        final_aps = np.zeros(duration)
-        theta = np.zeros(duration)
+    final_aps = np.zeros(duration)
 
-        for i in range(duration):
-            theta[i] = theta_[i]
-            
-        if fast == True:
-            sum_range =  10
+    if fast == True:
+        sum_range =  10
+        print('Note: Fast scrub is enabled.')
+    else:
+        sum_range = duration
+        print('Radial prediction computing: Note time for computation may be excessive.')
+
+    print(sum_range)
+
+
+    for j in range(sum_range): #duration
+        constant = (ua**0.5)*(za**2)
+
+        # Define parameters
+        L = wind_radius[j] - psp_radius[j]
+        l = psp_radius[j]
+        # Step size
+        h = (1 - l)/(duration)
+        # Create the numerical grid
+        R = np.arange(l, 1, h)
+
+        # Explicit Euler Method
+        if theta_[j] > 15:
+            s_ = 15
         else:
-            sum_range = duration
+            s_ = theta_[j]
 
-        print(sum_range)
+        for k in range(0,len(R) - 1):
+            Tp = (tp0[j])*(R[k]**tppower)
+            ndp = (np0[j])*(R[k]**nppower)
+            vrp = (vrp0[j])*(R[k]**vrppower)
+            nap = (n[j])*(R[k]**(napower-nppower))
 
-        s = {}
+            equ_one = Norm*(ndp/(vrp*(Tp**1.5)))*(((constant)/((ua + s[j][k])**1.5)))*(1-s[j][k])*(1+nap*s[j][k])
+            equ_two = (9+ np.log(((Tp**1.5)/(ndp**0.5))*((ua + s[j][k])/(za*(1 + ua)))*((1 +((za*za*nap)/(s[j][k])))**(-0.5))))
+            s_ = s_ + h*equ_one*equ_two
 
-        plt.figure(figsize=(const.x_dim, const.y_dim))
-        for j in range(sum_range): #duration
-            constant = (ua**0.5)*(za**2)
+        final_aps[j] = s_
 
-            # Define parameters
-            L = wind_radius[j] - psp_radius[j]
-            l = psp_radius[j]
-            # Step size
-            h = (1 - l)/(duration) 
-            # Create the numerical grid
-            R = np.arange(l, 1, h) 
+    print(final_aps)
 
-            #Set up variable functions
-            
-            s[j] = np.zeros(len(R))
-            # Explicit Euler Method
-            if theta[j] > 15:
-                s[j][0] = 15
-                test_s_s = 15
-            else:
-                s[j][0] = theta[j]
-                test_s_s = theta[j]
-            
-                
-            for k in range(0,len(R) - 1):
-                Tp = (tp0[j])*(R[k]**tppower)
-                ndp = (np0[j])*(R[k]**nppower)
-                vrp = (vrp0[j])*(R[k]**vrppower)
-                nap = (n[j])*(R[k]**(napower-nppower))
-                
-                equ_one = Norm*(ndp/(vrp*(Tp**1.5)))*(((constant)/((ua + s[j][k])**1.5)))*(1-s[j][k])*(1+nap*s[j][k])
-                #print('Equation 1', equ_one)
-                equ_two = (9+ np.log(((Tp**1.5)/(ndp**0.5))*((ua + s[j][k])/(za*(1 + ua)))*((1 +((za*za*nap)/(s[j][k])))**(-0.5))))
-                #print('Equation 2', equ_two)
-                test_s_s = test_s_s + h*equ_one*equ_two
-                #s[j][k + 1] = s[j][k] + h*equ_one*equ_two
-                #print('s:', s[i][k+1])
+    weights = np.ones_like(final_aps)/float(len(final_aps))
 
-            final_aps[j] = test_s_s#s[j][len(R)-1]
-            #plt.plot(R, s[j])
+    plt.figure(figsize=(const.x_dim,const.y_dim))
+    plt.title('Histogram of α-proton relative temperatures', fontsize=24)
+    plt.ylabel('Probability density', fontsize=18)
+    plt.xlabel('α-proton relative temperature', fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+
+    _,bins,_ = plt.hist(smooth(final_aps,50), 150, density=1, alpha=0.75, histtype='step', linewidth=3, fill=False)
+    mu, sigma = norm.fit(final_aps)
+    best_fit_line = norm.pdf(bins,mu,sigma)
+    #plt.plot(bins, best_fit_line)
+
+    #plt.hist(, density=True, bins=50, range=[0, 15], label='MM data modelled')
+    plt.grid()
+    plt.show()
 
 
-        plt.title('Theta against Radius')
-        plt.xlabel('r [Au]')
-        plt.ylabel('Theta')
-        plt.grid()
-        #plt.show()
-        
-        print(final_aps)
-        
-        weights = np.ones_like(final_aps)/float(len(final_aps))
 
-        plt.figure(figsize=(const.x_dim,const.y_dim))
-        plt.title('Histogram of α-proton relative temperatures', fontsize=24)
-        plt.ylabel('Probability density', fontsize=18)
-        plt.xlabel('α-proton relative temperature', fontsize=18)
-        plt.xticks(fontsize=16)
-        plt.yticks(fontsize=16)
-
-        _,bins,_ = plt.hist(smooth(final_aps,50), 150, density=1, alpha=0.75, histtype='step', linewidth=3, fill=False)
-        mu, sigma = norm.fit(final_aps)
-        best_fit_line = norm.pdf(bins,mu,sigma)
-        #plt.plot(bins, best_fit_line)
-        
-        #plt.hist(, density=True, bins=50, range=[0, 15], label='MM data modelled')
-        plt.grid()
-        plt.show()
-
-            
-            
-        return final_aps
+    return final_aps
 

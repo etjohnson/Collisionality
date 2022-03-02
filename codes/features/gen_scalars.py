@@ -77,14 +77,14 @@ def scalar_velocity(
 			val = 0
 		else:
 			pass
-		data[p]['v_mag'].append(val)
+		data[p]['v_mag'].append(np.sqrt(val))
 	for i in range(L_a):
 		val = (data[a]['va_x'][i])**2+(data[a]['va_y'][i])**2+(data[a]['va_z'][i])**2
 		if val < 0:
 			val = 0
 		else:       
 			pass
-	data[a]['v_mag'].append(val)
+	data[a]['v_mag'].append(np.sqrt(val))
 		
 	return data
     
