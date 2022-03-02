@@ -61,6 +61,7 @@ def tr(
         sum_range = duration
         print('Radial prediction computing: Note time for computation may be excessive.')
 
+    print(sum_range)
 
     for j in range(sum_range):
         constant = (ua**0.5)*(za**2)
