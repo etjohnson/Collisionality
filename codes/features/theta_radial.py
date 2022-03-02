@@ -55,16 +55,14 @@ def tr(
     final_aps = np.zeros(duration)
 
     if fast == True:
-        sum_range =  10
-        print('Note: Fast scrub is enabled.')
+        sum_range = 50
+        print('Radial prediction computing: Fast mode.')
     else:
         sum_range = duration
         print('Radial prediction computing: Note time for computation may be excessive.')
 
-    print(sum_range)
 
-
-    for j in range(sum_range): #duration
+    for j in range(sum_range):
         constant = (ua**0.5)*(za**2)
 
         # Define parameters
@@ -87,8 +85,8 @@ def tr(
             vrp = (vrp0[j])*(R[k]**vrppower)
             nap = (n[j])*(R[k]**(napower-nppower))
 
-            equ_one = Norm*(ndp/(vrp*(Tp**1.5)))*(((constant)/((ua + s[j][k])**1.5)))*(1-s[j][k])*(1+nap*s[j][k])
-            equ_two = (9+ np.log(((Tp**1.5)/(ndp**0.5))*((ua + s[j][k])/(za*(1 + ua)))*((1 +((za*za*nap)/(s[j][k])))**(-0.5))))
+            equ_one = Norm*(ndp/(vrp*(Tp**1.5)))*(((constant)/((ua + s_)**1.5)))*(1-s_)*(1+nap*s_)
+            equ_two = (9+ np.log(((Tp**1.5)/(ndp**0.5))*((ua + s_)/(za*(1 + ua)))*((1 +((za*za*nap)/(s_)))**(-0.5))))
             s_ = s_ + h*equ_one*equ_two
 
         final_aps[j] = s_

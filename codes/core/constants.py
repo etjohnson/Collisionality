@@ -49,7 +49,7 @@ def const(
                              
         const.error_files = False 
         const.output = False
-        const.scrub = False
+        const.scrub = True
                 
         const.x_dim = 10
         const.y_dim = 10

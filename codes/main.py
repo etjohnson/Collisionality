@@ -112,7 +112,7 @@ solar_len_max = max(solar_lens)
 spc_len_max = max(spc_lens)
 
 if solar_len_max > spc_len_max or solar_len_max == spc_len_max:
-	index_loc = solar_lens.index(solar_len_max)
+	index_loc = (solar_lens.index(solar_len_max))/2
 	if isinstance(index_loc, int):
 		t_ = solar_data[p]['time']
 	else:
@@ -190,7 +190,7 @@ theta = np.interp(time, solar_data[a]['time'], scalar_temps['theta_ap'])
 wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']),fill_value=1,dtype=int)
 psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
 
-final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, True)
+final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, False)
 
 
 tt.toc()
