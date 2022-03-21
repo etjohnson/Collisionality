@@ -68,7 +68,7 @@ def tr(
         L = wind_radius[j] - psp_radius[j]
         l = psp_radius[j]
         # Step size
-        h = (1 - l)/(10**2)
+        h = (1 - l)/(10)
         # Create the numerical grid
         R = np.arange(l, 1, h)
 
