@@ -129,7 +129,12 @@ for x in range(1):
 for x in const.encounter:
     for y in mm_data[x].keys():
         for z in mm_data[x][y]:
-            solar_data[p][z].append(mm_data[x][y][z])
+            solar_data[p][y].append(mm_data[x][y][z])
+            solar_data[a][y].append(mm_data[x][y][z])
+
+    for y in sc_data[x].keys():
+        for z in sc_data[x][y]:
+            spc_data[y].append(sc_data[x][y][z])
 
 # Data scrubbing
 print('Scrubbing data...')
