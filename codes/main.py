@@ -2,6 +2,7 @@ import sys
 import os.path
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import norm
 
 from core.constants import const
 from core.scrub import scrub
@@ -11,6 +12,7 @@ from core import tictoc as tt
 from features import latlong as lalo
 from features import gen_scalars as sc_gen
 from features import theta_radial as the_rad
+from features.smooth import smooth
 
 tt.tic()
 p = 'proton'
@@ -106,11 +108,10 @@ for x in spc_data.keys():
 
 solar_len_max = max(solar_lens)
 spc_len_max = max(spc_lens)
-print(solar_len_max, spc_len_max)
+
 if solar_len_max > spc_len_max or solar_len_max == spc_len_max:
-    index_loc = (solar_lens.index(solar_len_max)) / 2 #gives it a decimal point so dont work slkjfsl,mjnflk
-    print(index_loc)
-    if isinstance(index_loc, int): #dont work
+    index_loc = (solar_lens.index(solar_len_max))
+    if index_loc % 2 == 0:
         t_ = solar_data[p]['time']
     else:
         t_ = solar_data[a]['time']
@@ -119,7 +120,7 @@ elif spc_len_max > solar_len_max:
     t_ = spc_data[const.sc_names[index_loc]]['time']
 else:
     raise Exception('Fatal Error: Length of arrays could not be determined.')
-print(len(t_), len(solar_data[a]['time']))
+
 for x in solar_data.keys():
     xp = solar_data[x]['time']
     for y in solar_data[x].keys():
@@ -136,21 +137,25 @@ print('Scrubbing data...')
 if const.scrub == True:
     l = -1
     k = -1
+    print("1/2: ")
     for x in solar_data.keys():
         l = l + 1
         for y in solar_data[x].keys():
             k = k + 1
             val = const.data_units[l][k]
             solar_data[x][y] = scrub(solar_data[x][y], const.var_min[val], const.var_max[val])
+        print(f"{(l / len(solar_data)) * 100:.2f} %", end="\r")
         k = -1
     m = -1
     n = -1
+    print("2/2: ")
     for x in spc_data.keys():
         m = m + 1
         for y in spc_data[x].keys():
             n = n + 1
             val = const.sc_units[l][k]
             spc_data[x][y] = scrub(spc_data[x][y], const.var_min[val], const.var_max[val])
+        print(f"{(m / len(spc_data)) * 100:.2f} %", end="\r")
         n = -1
     sc_data[encount][const.sc_names[0]] = lalo.latlong_psp(sc_data[encount][const.sc_names[0]])
     sc_data[encount][const.sc_names[1]] = lalo.latlong_psp(sc_data[encount][const.sc_names[1]])
@@ -169,9 +174,19 @@ for i in range(len(solar_data[p]['time'])):
     solar_data['time'].append(df.epoch_time(solar_data[p]['time'][i]))
 print('Note: Files have been generated and loaded in.', '\n')
 
-plt.plot(solar_data['time'], solar_data[p]['np1'])
-plt.plot(solar_data['time'], solar_data[p]['np2'])
-plt.yscale('log')
+plt.figure(figsize=(const.x_dim, const.y_dim))
+plt.plot(solar_data['time'],scalar_temps['theta_ap'])
+plt.show()
+
+plt.figure(figsize=(const.x_dim, const.y_dim))
+plt.title('Histogram of α-proton relative temperatures', fontsize=22)
+plt.ylabel('Probability density', fontsize=16)
+plt.xlabel('α-proton relative temperature', fontsize=16)
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
+plt.hist(scalar_temps['theta_ap'], 500, density=1, alpha=0.75, histtype='step', linewidth=3, fill=True)
+plt.xlim([0,15])
+plt.grid()
 plt.show()
 
 #
@@ -184,7 +199,6 @@ theta = np.interp(time, solar_data[a]['time'], scalar_temps['theta_ap'])
 wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']), fill_value=1, dtype=int)
 psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
 
-print(len(time), len(mm_data[const.encounter[0]]['E4_protons.csv']['time']))
 
 final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, False)
 

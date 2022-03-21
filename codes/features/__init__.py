@@ -1,7 +1,7 @@
 
-__all__ = ["latlong.py, gen_scalars.py, smooth.py, theta_radial.py"]
+__all__ = ["latlong.py, gen_scalars.py, theta_radial.py, smooth.py"]
 
 from .latlong import *
 from .gen_scalars import *
-from .smooth import *
 from .theta_radial import *
+from .smooth import *

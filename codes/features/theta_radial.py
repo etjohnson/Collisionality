@@ -61,8 +61,6 @@ def tr(
         sum_range = duration
         print('Radial prediction computing: Note time for computation may be excessive.')
 
-    print(sum_range)
-
     for j in range(sum_range):
         constant = (ua**0.5)*(za**2)
 
@@ -70,7 +68,7 @@ def tr(
         L = wind_radius[j] - psp_radius[j]
         l = psp_radius[j]
         # Step size
-        h = (1 - l)/(duration)
+        h = (1 - l)/(10**2)
         # Create the numerical grid
         R = np.arange(l, 1, h)
 
@@ -91,6 +89,7 @@ def tr(
             s_ = s_ + h*equ_one*equ_two
 
         final_aps[j] = s_
+        print(f"{(j/sum_range)*100:.2f} %", end="\r")
 
     print(final_aps)
 

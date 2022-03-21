@@ -51,6 +51,5 @@ def scrub(
         else:
             array[i] = array[i]
 
-        
     return array
     

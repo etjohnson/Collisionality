@@ -14,6 +14,7 @@ def encounter_import(
         for j in range(2):
             val = str(const.encounter[i] + '/' + const.encounter_names[j +2*i])
             files[const.encounter[i]][const.encounter_names[j + 2*i]] = file_import(val, const.str_dir)
+        print(f"{(i/const.num_of_encs)* 100:.2f} %", end="\r")
     return files
 
 def sc_import(
