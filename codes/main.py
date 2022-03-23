@@ -126,15 +126,19 @@ for x in range(1):
         for z in sc_data[encount][const.sc_names[y]].keys():
             spc_data[const.sc_names[y]][z] = []
 
-for x in const.encounter:
-    for y in mm_data[x].keys():
-        for z in mm_data[x][y]:
-            solar_data[p][y].append(mm_data[x][y][z])
-            solar_data[a][y].append(mm_data[x][y][z])
-
-    for y in sc_data[x].keys():
-        for z in sc_data[x][y]:
-            spc_data[y].append(sc_data[x][y][z])
+for x in range(dum_len):
+    encount = const.encounter[x]
+    for y in range(1):
+        for z in solar_data[p].keys():
+            for w in range(len(mm_data[encount][const.encounter_names[y + 2 * x]][z])):
+                solar_data[p][z].append(mm_data[encount][const.encounter_names[y + 2 * x]][z][w])
+        for z in solar_data[a].keys():
+            for w in range(len(mm_data[encount][const.encounter_names[2 * x + 1]][z])):
+                solar_data[a][z].append(mm_data[encount][const.encounter_names[2 * x + 1]][z][w])
+    for y in const.sc_names:
+        for z in spc_data[y].keys():
+            for w in range(len(sc_data[encount][y][z])):
+                spc_data[y][z].append(sc_data[encount][y][z][w])
 
 # Data scrubbing
 print('Scrubbing data...')
@@ -205,6 +209,6 @@ theta = np.interp(time, solar_data[a]['time'], scalar_temps['theta_ap'])
 wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']), fill_value=1, dtype=int)
 psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
 
-#final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, False)
+final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, False)
 
 tt.toc()
