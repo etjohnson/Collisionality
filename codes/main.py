@@ -72,7 +72,6 @@ mm_len_max = 0
 sc_len_max = 0
 
 for x in const.encounter:
-    print(x)
     for y in mm_data[x].keys():
         if len(mm_data[x][y]['time']) > mm_len_max:
             mm_len_max = len(mm_data[x][y]['time'])
