@@ -57,6 +57,14 @@ def scalar_temps(
         else:
             result[result_keys[4]][i] = data[alpha]['na'][i] / data[proton]['np1'][i]
 
+    for i in range(len(result['theta_ap'])):
+        if result['theta_ap'][i] > 15:
+            result['theta_ap'][i] = 15
+        elif result['theta_ap'][i] < 0:
+            result['theta_ap'][i] = 0
+        else:
+            pass
+
     return result
 
 

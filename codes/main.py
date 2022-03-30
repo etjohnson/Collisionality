@@ -1,8 +1,6 @@
 import sys
 import os.path
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import norm
 
 from core.constants import const
 from core.scrub import scrub
@@ -11,13 +9,15 @@ from core import tictoc as tt
 
 from features import latlong as lalo
 from features import gen_scalars as sc_gen
-from features import theta_radial as the_rad
 from features.smooth import smooth
+from features.graph_gen import graph_function
+
+from misc import fit as fit
 
 tt.tic()
 p = 'proton'
 a = 'alpha'
-valid_enc = [4, 6, 7]
+valid_enc = [6, 7]
 print('Current loaded encounters:', valid_enc, '\n')
 
 # Choose which data set(s) to work with
@@ -49,7 +49,7 @@ while h > 0:
             else:
                 print('Error: Could not determine if the input was an integer.')
     elif (val == ''):
-        print('Error: No input recieved. \n')
+        print('Error: No input received. \n')
     else:
         print('Error: Please make a valid selection.')
 x = const(enc, valid_enc)
@@ -173,41 +173,12 @@ print('Generating velocity magnitudes...')
 scalar_velocity = sc_gen.scalar_velocity(solar_data)
 print('Generating temperature file...', '\n')
 scalar_temps = sc_gen.scalar_temps(solar_data)
-# Generate single time set for the whole data set in approiate unit
+# Generate single time set for the whole data set in appropriate unit
 solar_data['time'] = []
 for i in range(len(solar_data[p]['time'])):
     solar_data['time'].append(df.epoch_time(solar_data[p]['time'][i]))
 print('Note: Files have been generated and loaded in.', '\n')
 
-plt.figure(figsize=(const.x_dim, const.y_dim))
-plt.plot(solar_data['time'], solar_data[p]['np1'])
-plt.show()
-
-plt.figure(figsize=(const.x_dim, const.y_dim))
-plt.plot(solar_data['time'], scalar_temps['theta_ap'])
-plt.show()
-
-plt.figure(figsize=(const.x_dim, const.y_dim))
-plt.title('Histogram of α-proton relative temperatures', fontsize=22)
-plt.ylabel('Probability density', fontsize=16)
-plt.xlabel('α-proton relative temperature', fontsize=16)
-plt.xticks(fontsize=16)
-plt.yticks(fontsize=16)
-plt.hist(smooth(scalar_temps['theta_ap'], 10), 500, density=True, alpha=0.75, histtype='step', linewidth=3, fill=False)
-plt.xlim([0, 15])
-plt.grid()
-plt.show()
-
-#
-time = solar_data[p]['time']
-density_p = solar_data[p]['np1']
-temp = scalar_temps['proton_1_k']
-speed = solar_data[p]['v_mag']
-density_a = np.interp(time, solar_data[a]['time'], solar_data[a]['na'])
-theta = np.interp(time, solar_data[a]['time'], scalar_temps['theta_ap'])
-wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']), fill_value=1, dtype=int)
-psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
-
-final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, False)
+graph_function(solar_data, spc_data, scalar_temps)
 
 tt.toc()

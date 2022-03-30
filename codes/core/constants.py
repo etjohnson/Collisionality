@@ -121,7 +121,23 @@ def const(
                 
         const.var_min =[0,density_min,speed_min,b_field_min,temp_min,chi_squared_min,dr_min, dv_min, dT_perp_min, bmag_min,v_gse_min,dens_add_min,nanp_min,presure_min,c_min]
 
-                
+
+        #------------------------------------#
+
+        const.title_size = 30
+        const.label_size = 24
+        const.tick_size = 22
+        const.legend_size = 20
+        const.font_family = 'Arial'
+
+        const.transparent = 0.0 # 0-1
+        const.pdf_smooth = 20
+        const.arg_smooth = 20
+
+        const.bin_width = 0.2
+
+        #------------------------------------#
+
         message = 'Note: Constants imported.'
 
         return message

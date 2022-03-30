@@ -1,117 +1,85 @@
+import math
 import sys
 import numpy as np
+import scipy as scipy
 from core.constants import const
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+import scipy.stats
+import scipy.optimize
 
 from features.smooth import smooth
 
-def tr(
-    time_,
-    np0_,
-    tp0_,
-    vrp0_,
-    na0_,
-    theta_,
-    wind_radius,
-    psp_radius,
-    fast = True,
-):
-    duration = len(time_)
 
-    # Normalisation Constant
-    Norm =  2.6*(10**1)
+def maxwell(x, r, m, s):
+    return (r / (s * np.sqrt(np.pi))) * np.exp(- (x - m) ** 2 / (2 * (s ** 2)))
 
-    # Initial proton conidition and decay power.
-    np0 = np0_
-    nppower = -1.8
 
-    #Initial proton tempreture and decay power.
-    tp0 = tp0_
-    tppower = -0.74
+def theta_ap_0(r_0, r_1, n_p_1, eta_ap, v_p_1, t_p_1, theta_ap_1,
+               n_step=1000):
+    # Initialize the alpha-proton charge and mass ratios.
 
-    # Average velocity and decay power
-    vrp0 = vrp0_
-    vrppower = -0.2
+    z_a = 2.
+    mu_a = 4.
 
-    #Alpha particle parameters
-    ua = 4
-    za = 2
+    # Initialize.
 
-    # Inital alpha condition and decay power.
-    na0 = na0_
-    napower =  -1.8
+    d_r = (r_0 - r_1) / (1. * n_step)
 
-    n = np.zeros(duration)
+    r = r_1
+    n_p = n_p_1
+    v_p = v_p_1
+    t_p = t_p_1
+    theta_ap = theta_ap_1
 
-    for i in range(duration):
-        if np0[i] == 0:
-            n[i] = 0
+    theta_ap_min = 0.01
+    theta_ap_max = 100.
+
+    try:
+        is_list_like = True
+        temp = eta_ap[0]
+    except:
+        is_list_like = False
+
+    # Loop.
+
+    for i in range(n_step):
+
+        r = r_1 + ((i + 1) * d_r)
+
+        n_p = n_p_1 * (r / r_1) ** -1.8
+        v_p = v_p_1 * (r / r_1) ** -0.2
+        t_p = t_p_1 * (r / r_1) ** -0.77
+
+        arg_ = ((n_p ** 0.5 / t_p ** 1.5) * (z_a * (mu_a + 1) / (theta_ap + mu_a)) *
+                (1 + (z_a ** 2 * eta_ap / theta_ap)) ** 0.5)
+
+        if arg_ == 0:
+            arg_ = math.exp(9)
         else:
-            n[i] = na0[i]/np0[i]
+            pass
 
-    #Compute#
+        lambda_ap = 9 - np.log(arg_)
 
-    final_aps = np.zeros(duration)
+        d_theta_ap = ((-2.60e7) * ((n_p / (v_p * t_p ** 1.5))) * (mu_a ** 0.5 * z_a ** 2 / (eta_ap + 1) ** 2.5) *
+                      ((theta_ap - 1.) * (eta_ap * theta_ap + 1.) ** 2.5 / (theta_ap + mu_a) ** 1.5) * (lambda_ap) *
+                      (d_r))
+        # print(d_theta_ap)
+        theta_ap = theta_ap + d_theta_ap
 
-    if fast == True:
-        sum_range = 50
-        print('Radial prediction computing: Fast mode.')
-    else:
-        sum_range = duration
-        print('Radial prediction computing: Note time for computation may be excessive.')
-
-    for j in range(sum_range):
-        constant = (ua**0.5)*(za**2)
-
-        # Define parameters
-        L = wind_radius[j] - psp_radius[j]
-        l = psp_radius[j]
-        # Step size
-        h = (1 - l)/(100)
-        # Create the numerical grid
-        R = np.arange(l, 1, h)
-
-        # Explicit Euler Method
-        if theta_[j] > 15:
-            s_ = 15
+        if (is_list_like):
+            tk_i = np.where(theta_ap < theta_ap_min)
+            theta_ap[tk_i] = theta_ap_min
         else:
-            s_ = theta_[j]
+            theta_ap = max([theta_ap, theta_ap_min])
 
-        for k in range(0,len(R) - 1):
-            Tp = (tp0[j])*(R[k]**tppower)
-            ndp = (np0[j])*(R[k]**nppower)
-            vrp = (vrp0[j])*(R[k]**vrppower)
-            nap = (n[j])*(R[k]**(napower-nppower))
+        if (is_list_like):
+            tk_i = np.where(theta_ap > theta_ap_max)
+            theta_ap[tk_i] = theta_ap_max
+        else:
+            theta_ap = min([theta_ap, theta_ap_max])
 
-            equ_one = Norm*(ndp/(vrp*(Tp**1.5)))*(((constant)/((ua + s_)**1.5)))*(1-s_)*(1+nap*s_)
-            equ_two = (9+ np.log(((Tp**1.5)/(ndp**0.5))*((ua + s_)/(za*(1 + ua)))*((1 +((za*za*nap)/(s_)))**(-0.5))))
-            s_ = s_ + h*equ_one*equ_two
+    # Return.
 
-        final_aps[j] = s_
-        print(f"{(j/sum_range)*100:.2f} %", end="\r")
-
-    print(final_aps)
-
-    weights = np.ones_like(final_aps)/float(len(final_aps))
-
-    plt.figure(figsize=(const.x_dim,const.y_dim))
-    plt.title('Histogram of α-proton relative temperatures', fontsize=24)
-    plt.ylabel('Probability density', fontsize=18)
-    plt.xlabel('α-proton relative temperature', fontsize=18)
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-
-    _,bins,_ = plt.hist(smooth(final_aps,50), 150, density=1, alpha=0.75, histtype='step', linewidth=3, fill=False)
-    mu, sigma = norm.fit(final_aps)
-    best_fit_line = norm.pdf(bins,mu,sigma)
-    #plt.plot(bins, best_fit_line)
-
-    #plt.hist(, density=True, bins=50, range=[0, 15], label='MM data modelled')
-    plt.grid()
-    plt.show()
-
-
-
-    return final_aps
+    return theta_ap
 
