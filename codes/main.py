@@ -10,7 +10,7 @@ from core import tictoc as tt
 from features import latlong as lalo
 from features import gen_scalars as sc_gen
 from features.smooth import smooth
-from features.graph_gen import graph_function
+from features import graph_gen
 
 from misc import fit as fit
 
@@ -173,12 +173,15 @@ print('Generating velocity magnitudes...')
 scalar_velocity = sc_gen.scalar_velocity(solar_data)
 print('Generating temperature file...', '\n')
 scalar_temps = sc_gen.scalar_temps(solar_data)
+
 # Generate single time set for the whole data set in appropriate unit
-solar_data['time'] = []
+time = []
 for i in range(len(solar_data[p]['time'])):
-    solar_data['time'].append(df.epoch_time(solar_data[p]['time'][i]))
+    time.append(df.epoch_time(solar_data[p]['time'][i]))
 print('Note: Files have been generated and loaded in.', '\n')
 
-graph_function(solar_data, spc_data, scalar_temps)
+graph_gen.graph_function(solar_data, spc_data, scalar_temps)
+solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
+graph_gen.graph_function(solar_sort[const.R], spc_sort[const.R], temp_sort[const.R], const.R)
 
 tt.toc()

@@ -1,5 +1,8 @@
 #---Constants & Input---#
 import numpy as np
+import pathlib
+import os
+
 def const(
         enc,
         valid_enc,
@@ -49,21 +52,19 @@ def const(
                              
         const.error_files = False 
         const.output = False
-        const.scrub = False
+        const.scrub = True
                 
         const.x_dim = 10
         const.y_dim = 10
 
         #------------------------------------------------------------------------------#
-        
-        #const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
-        #const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
-        
-        #const.str_dir = "/home/elliot/Documents/GitHub/Collisionality_v2/data/load/"
-        #const.str_save = "/home/elliot/Documents/GitHub/Collisionality_v2/data/save/"
 
-        const.str_dir = "D:/My Drive/Github/Collisionality_v2/data/load/"
-        const.str_save = "D:/My Drive/Github/Collisionality_v2/data/save/"
+        directory = os.getcwd()
+        path = str(pathlib.Path(directory).parent)
+
+        const.str_dir = str(path + "/data/load/")
+        const.str_save = str(path + "/data/save/")
+
 
         if enc == 0:
                 L = len(valid_enc)
@@ -135,6 +136,10 @@ def const(
         const.arg_smooth = 20
 
         const.bin_width = 0.2
+
+        const.dp_number = 1
+        const.predict = True
+        const.R = 0.1
 
         #------------------------------------#
 

@@ -26,7 +26,7 @@ def scalar_temps(
 
     result = {}
     result_keys = ['proton_scalar_temp_1', 'proton_scalar_temp_2', 'alpha_scalar_temp', 'theta_ap', 'dens_ap',
-                   'proton_perpar', 'alpha_perpar', 'proton_1_k', 'alpha_k']
+                   'proton_perpar', 'alpha_perpar', 'proton_1_k', 'alpha_k','time']
 
     result[result_keys[0]] = np.zeros(length[0])
     result[result_keys[1]] = np.zeros(length[0])
@@ -65,6 +65,8 @@ def scalar_temps(
         else:
             pass
 
+    result['time'] = data[proton]['time']
+
     return result
 
 
@@ -93,6 +95,6 @@ def scalar_velocity(
             val = 0
         else:
             pass
-    data[a]['v_mag'].append(np.sqrt(val))
+        data[a]['v_mag'].append(np.sqrt(val))
 
     return data
