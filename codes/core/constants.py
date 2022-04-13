@@ -142,7 +142,7 @@ def const(
 
     const.dp_number = 1
     const.predict = True
-    const.R = 0.1
+    const.R = 0.2
     const.wind_radius = 0.9
 
     # ------------------------------------#
