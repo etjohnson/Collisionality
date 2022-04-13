@@ -30,9 +30,7 @@ def sc_import(
         for key in const.sc_names:
             val = str(const.encounter[i] + '/Position/' + key)
             files[const.encounter[i]][key] = file_import(val, const.str_dir)
-    print('\n',
-          'Warning: Please ensure all data is in the correct time range for the encounter.',
-          '\n')
+    print('\n', 'Warning: Please ensure all data is in the correct time range for the encounter.', '\n')
     return files
 
 

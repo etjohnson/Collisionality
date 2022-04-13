@@ -132,25 +132,30 @@ def const(
     const.label_size = 24
     const.tick_size = 22
     const.legend_size = 20
-    const.font_family = 'DejaVu Sans'
+    const.font_family = 'sans-serif'
 
     const.transparent = 0.0  # 0-1
     const.pdf_smooth = 20
     const.arg_smooth = 20
 
-    const.bin_width = 0.2
+    const.bin_width = 0.02
 
-    const.dp_number = 3
+    const.dp_number = 1
     const.predict = True
-    const.R = 0.12
+    const.R = 0.1
+    const.wind_radius = 0.9
 
     # ------------------------------------#
 
     message = 'Note: Constants imported.'
 
-    if const.R > 0.2:
+    if const.R > 0.21:
         raise ValueError(
             f"R must be smaller than the largest radius in the data set"
+        )
+    if const.wind_radius < 0.3:
+        raise ValueError(
+            f"Wind must have a distance greater than PSP"
         )
 
     return message

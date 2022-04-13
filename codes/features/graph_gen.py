@@ -56,8 +56,8 @@ def graph_function(
     temp = scalar_temps['proton_1_k']
     speed = solar_data[p]['v_mag']
     theta = scalar_temps['theta_ap']
-    wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']), fill_value=1,
-                          dtype=int)
+    wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']), fill_value=const.wind_radius,
+                          dtype=float)
     psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'],
                            spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
 
