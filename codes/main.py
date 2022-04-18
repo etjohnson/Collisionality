@@ -186,4 +186,5 @@ solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, s
 print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
 graph_gen.graph_function(solar_sort[const.R], spc_sort[const.R], temp_sort[const.R], str(const.R))
 
+
 tt.toc()

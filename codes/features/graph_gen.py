@@ -46,6 +46,7 @@ def graph_function(
     plt.xticks(fontsize=const.tick_size)
     plt.yticks(fontsize=const.tick_size)
     plt.xlim([0, 15])
+    plt.ylim([0, 2])
     plt.grid()
     plt.show()
 
@@ -56,14 +57,17 @@ def graph_function(
     temp = scalar_temps['proton_1_k']
     speed = solar_data[p]['v_mag']
     theta = scalar_temps['theta_ap']
-    wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']), fill_value=const.wind_radius,
+    wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']),
+                          fill_value=const.wind_radius,
                           dtype=float)
-    psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'],
-                           spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
+    psp_radius = spc_data[const.sc_names[0]][
+        'RADIAL_DISTANCE_AU']  # np.interp(time, spc_data[const.sc_names[0]]['time'],
+    # spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
 
     if const.predict == True:
-        final_theta = theta_loop(time, wind_radius, psp_radius, density_p, density_ap, speed,
-                             temp, theta)
+        final_theta = theta_loop(time, wind_radius, psp_radius, density_p, density_ap,
+                                 speed,
+                                 temp, theta)
     else:
         final_theta = 0
 
@@ -94,11 +98,9 @@ def graph_function(
     plt.legend(loc='upper right',
                prop={'size': const.legend_size, 'family': const.font_family})
     plt.xlim([0, 15])
-    #plt.ylim([0, 0.3])
+    plt.ylim([0, 2])
     plt.grid()
     plt.show()
-
-    return
 
 
 def theta_loop(
@@ -160,11 +162,13 @@ def radius_split(
 
                 for particle in solar_sorted_data[radius]:
                     for key in solar_sorted_data[radius][particle].keys():
-                        solar_sorted_data[radius][particle][key].append(solar_data[particle][key][i])
+                        solar_sorted_data[radius][particle][key].append(
+                            solar_data[particle][key][i])
 
                 for spacecraft in spc_sorted_data[radius]:
                     for key in spc_sorted_data[radius][spacecraft].keys():
-                        spc_sorted_data[radius][spacecraft][key].append(spc_data[spacecraft][key][i])
+                        spc_sorted_data[radius][spacecraft][key].append(
+                            spc_data[spacecraft][key][i])
                 for temp in temp_sorted_data[radius]:
                     temp_sorted_data[radius][temp].append(scalar_temps[temp][i])
             else:

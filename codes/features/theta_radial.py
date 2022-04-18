@@ -61,8 +61,10 @@ def theta_ap_0(r_0, r_1, n_p_1, eta_ap, v_p_1, t_p_1, theta_ap_1,
 
         lambda_ap = 9 - np.log(arg_)
 
-        d_theta_ap = ((-2.60e7) * ((n_p / (v_p * t_p ** 1.5))) * (mu_a ** 0.5 * z_a ** 2 / (eta_ap + 1) ** 2.5) *
-                      ((theta_ap - 1.) * (eta_ap * theta_ap + 1.) ** 2.5 / (theta_ap + mu_a) ** 1.5) * (lambda_ap) *
+        d_theta_ap = ((-2.60e7) * ((n_p / (v_p * t_p ** 1.5))) * (
+                mu_a ** 0.5 * z_a ** 2 / (eta_ap + 1) ** 2.5) *
+                      ((theta_ap - 1.) * (eta_ap * theta_ap + 1.) ** 2.5 / (
+                              theta_ap + mu_a) ** 1.5) * (lambda_ap) *
                       (d_r))
         # print(d_theta_ap)
         theta_ap = theta_ap + d_theta_ap
@@ -82,4 +84,3 @@ def theta_ap_0(r_0, r_1, n_p_1, eta_ap, v_p_1, t_p_1, theta_ap_1,
     # Return.
 
     return theta_ap
-

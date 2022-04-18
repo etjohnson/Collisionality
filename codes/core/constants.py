@@ -18,7 +18,7 @@ def const(
     b_field_max = 10 ** 8
     b_field_min = 0
 
-    temp_max = 10 ** 8
+    temp_max = 10 ** 6
     temp_min = 0
 
     chi_squared_max = 5000
@@ -143,7 +143,7 @@ def const(
     const.dp_number = 1
     const.predict = True
     const.R = 0.2
-    const.wind_radius = 0.9
+    const.wind_radius = 1
 
     # ------------------------------------#
 
@@ -153,7 +153,7 @@ def const(
         raise ValueError(
             f"R must be smaller than the largest radius in the data set"
         )
-    if const.wind_radius < 0.3:
+    if const.wind_radius < 0.19:
         raise ValueError(
             f"Wind must have a distance greater than PSP"
         )
