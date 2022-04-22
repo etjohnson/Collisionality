@@ -16,14 +16,19 @@ def graph_function(
         solar_data,
         spc_data,
         scalar_temps,
-        r_value='0.1 - 0.2'
+        theta_vals=0,
+        r_value='0.1 - 0.2',
 ):
     p = 'proton'
     a = 'alpha'
 
     X = np.linspace(0, 15, 1000)
-
-    arg_ = smooth(scalar_temps['theta_ap'], const.arg_smooth)
+    print(theta_vals)
+    if isinstance(theta_vals, int):
+        val = scalar_temps['theta_ap']
+    else:
+        val = theta_vals
+    arg_ = smooth(val, const.arg_smooth)
 
     bins = int((max(arg_) - min(arg_)) / const.bin_width)
 
@@ -46,7 +51,7 @@ def graph_function(
     plt.xticks(fontsize=const.tick_size)
     plt.yticks(fontsize=const.tick_size)
     plt.xlim([0, 15])
-    plt.ylim([0, 2])
+    plt.ylim([0, const.y_tick])
     plt.grid()
     plt.show()
 
@@ -98,9 +103,11 @@ def graph_function(
     plt.legend(loc='upper right',
                prop={'size': const.legend_size, 'family': const.font_family})
     plt.xlim([0, 15])
-    plt.ylim([0, 2])
+    plt.ylim([0, const.y_tick])
     plt.grid()
     plt.show()
+
+    return final_theta
 
 
 def theta_loop(
@@ -176,3 +183,36 @@ def radius_split(
         print(f"{(i / len(spc_data[psp]['RADIAL_DISTANCE_AU'])) * 100:.2f} %", end="\r")
 
     return solar_sorted_data, spc_sorted_data, temp_sorted_data
+
+
+def make_hist(
+        data,
+):
+    plt.figure(figsize=(const.x_dim, const.y_dim))
+
+    X = np.linspace(0, 15, 1000)
+
+    arg_ = smooth(data, const.arg_smooth)
+
+    bins = int((max(arg_) - min(arg_)) / const.bin_width)
+
+    hist = np.histogram(arg_, bins=bins)
+    hist_dist = scipy.stats.rv_histogram(hist)
+    plt.plot(X, smooth(hist_dist.pdf(X), const.pdf_smooth),
+             label=r'$\theta_{\alpha p} \, {\rm AU})$',
+             color='black', linewidth=3)
+
+    plt.title(r'Histogram of $\alpha$-proton relative temperatures',
+              fontsize=const.title_size,
+              fontname=const.font_family)
+    plt.ylabel('Probability density', fontsize=const.label_size,
+               fontname=const.font_family)
+    plt.xlabel(r'$\alpha$-proton relative temperature', fontsize=const.label_size,
+               fontname=const.font_family)
+    plt.xticks(fontsize=const.tick_size)
+    plt.yticks(fontsize=const.tick_size)
+    plt.legend(loc='upper right',
+               prop={'size': const.legend_size, 'family': const.font_family})
+    plt.grid()
+
+    return
