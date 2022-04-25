@@ -1,0 +1,646 @@
+Index: codes/features/gen_scalars.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import sys\nimport numpy as np\nfrom core.constants import const\n\ndef scalar_temps(\n    data,\n):\n    \n    key_names = {}\n    file_names = []\n    for file in data:\n        file_names.append(file)\n        key_names[file] = []\n        for key in file:\n            key_names[file] = data[file].keys()\n\n    proton = 'proton'\n    alpha = 'alpha'\n    \n    factor = 11604\n    \n    length = []\n    for file in data:\n        val = str(list(data[file].keys())[0])\n        length.append(len(data[file][val]))\n        \n    result = {}\n    result_keys = ['proton_scalar_temp_1','proton_scalar_temp_2','alpha_scalar_temp','theta_ap','dens_ap','proton_perpar','alpha_perpar','proton_1_k','alpha_k']\n    \n    result[result_keys[0]] = np.zeros(length[0])\n    result[result_keys[1]] = np.zeros(length[0])\n    result[result_keys[2]] = np.zeros(length[1])\n    result[result_keys[3]] = np.zeros(length[1])\n    result[result_keys[4]] = np.zeros(length[1])\n    result[result_keys[5]] = np.zeros(length[0])\n    result[result_keys[6]] = np.zeros(length[1])\n    \n    result['proton_1_k'] = np.zeros(length[0])\n    result['alpha_k'] = np.zeros(length[1])\n    \n    for i in range(length[0]):\n        val = 'Tperp1'\n        result[result_keys[0]][i] = ((2*data[proton][val][i] + data[proton]['Trat1'][i])/3) \n        result[result_keys[1]][i] = ((2*data[proton]['Tperp2'][i] + data[proton]['Trat2'][i])/3)\n        result[result_keys[5]][i] = data[proton][val][i]/data[proton]['Trat1'][i]\n        result['proton_1_k'][i] = result[result_keys[0]][i]*factor\n        \n    for i in range(length[1]):\n        result[result_keys[2]][i] = (2*data[alpha]['Ta_perp'][i] + data[alpha]['Trat'][i])/3\n        result[result_keys[3]][i] = result[result_keys[2]][i]/result[result_keys[0]][i]\n        result[result_keys[6]][i] = data[alpha]['Ta_perp'][i]/data[alpha]['Trat'][i]      \n        result['alpha_k'][i] = result[result_keys[2]][i]*factor         \n\n        if data[proton]['np1'][i] == 0:\n            result[result_keys[4]][i] = 0\n        else:    \n            result[result_keys[4]][i] = data[alpha]['na'][i]/data[proton]['np1'][i]\n          \n    return result\n\ndef scalar_velocity(\n    data,\n):\n\n\tp = 'proton'\n\ta = 'alpha'\n\n\tdata[p]['v_mag'] = []\n\tdata[a]['v_mag'] = []\n\n\tL_p = len(data[p]['time'])\n\tL_a = len(data[a]['time'])\n\t\t\n\tfor i in range(L_p):\n\t\tval = (data[p]['vp1_x'][i])**2+(data[p]['vp1_y'][i])**2+(data[p]['vp1_z'][i])**2\n\t\tif val < 0:\n\t\t\tval = 0\n\t\telse:\n\t\t\tpass\n\t\tdata[p]['v_mag'].append(np.sqrt(val))\n\tfor i in range(L_a):\n\t\tval = (data[a]['va_x'][i])**2+(data[a]['va_y'][i])**2+(data[a]['va_z'][i])**2\n\t\tif val < 0:\n\t\t\tval = 0\n\t\telse:       \n\t\t\tpass\n\tdata[a]['v_mag'].append(np.sqrt(val))\n\t\t\n\treturn data\n    \n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/codes/features/gen_scalars.py b/codes/features/gen_scalars.py
+--- a/codes/features/gen_scalars.py	(revision e9a3d8abcf04c257ec7e7c07c5a62b5724e3bae7)
++++ b/codes/features/gen_scalars.py	(date 1647964158924)
+@@ -2,10 +2,10 @@
+ import numpy as np
+ from core.constants import const
+ 
++
+ def scalar_temps(
+-    data,
++        data,
+ ):
+-    
+     key_names = {}
+     file_names = []
+     for file in data:
+@@ -16,75 +16,73 @@
+ 
+     proton = 'proton'
+     alpha = 'alpha'
+-    
++
+     factor = 11604
+-    
+-    length = []
+-    for file in data:
+-        val = str(list(data[file].keys())[0])
+-        length.append(len(data[file][val]))
+-        
++
++    val = str(list(data[file].keys())[0])
++    length = len(data[file][val])
++
+     result = {}
+-    result_keys = ['proton_scalar_temp_1','proton_scalar_temp_2','alpha_scalar_temp','theta_ap','dens_ap','proton_perpar','alpha_perpar','proton_1_k','alpha_k']
+-    
+-    result[result_keys[0]] = np.zeros(length[0])
+-    result[result_keys[1]] = np.zeros(length[0])
+-    result[result_keys[2]] = np.zeros(length[1])
+-    result[result_keys[3]] = np.zeros(length[1])
+-    result[result_keys[4]] = np.zeros(length[1])
+-    result[result_keys[5]] = np.zeros(length[0])
+-    result[result_keys[6]] = np.zeros(length[1])
+-    
+-    result['proton_1_k'] = np.zeros(length[0])
+-    result['alpha_k'] = np.zeros(length[1])
+-    
+-    for i in range(length[0]):
++    result_keys = ['proton_scalar_temp_1', 'proton_scalar_temp_2', 'alpha_scalar_temp', 'theta_ap', 'dens_ap',
++                   'proton_perpar', 'alpha_perpar', 'proton_1_k', 'alpha_k']
++
++    result[result_keys[0]] = np.zeros(length)
++    result[result_keys[1]] = np.zeros(length)
++    result[result_keys[2]] = np.zeros(length)
++    result[result_keys[3]] = np.zeros(length)
++    result[result_keys[4]] = np.zeros(length)
++    result[result_keys[5]] = np.zeros(length)
++    result[result_keys[6]] = np.zeros(length)
++
++    result['proton_1_k'] = np.zeros(length)
++    result['alpha_k'] = np.zeros(length)
++
++    for i in range(length):
+         val = 'Tperp1'
+-        result[result_keys[0]][i] = ((2*data[proton][val][i] + data[proton]['Trat1'][i])/3) 
+-        result[result_keys[1]][i] = ((2*data[proton]['Tperp2'][i] + data[proton]['Trat2'][i])/3)
+-        result[result_keys[5]][i] = data[proton][val][i]/data[proton]['Trat1'][i]
+-        result['proton_1_k'][i] = result[result_keys[0]][i]*factor
+-        
+-    for i in range(length[1]):
+-        result[result_keys[2]][i] = (2*data[alpha]['Ta_perp'][i] + data[alpha]['Trat'][i])/3
+-        result[result_keys[3]][i] = result[result_keys[2]][i]/result[result_keys[0]][i]
+-        result[result_keys[6]][i] = data[alpha]['Ta_perp'][i]/data[alpha]['Trat'][i]      
+-        result['alpha_k'][i] = result[result_keys[2]][i]*factor         
++        result[result_keys[0]][i] = ((2 * data[proton][val][i] + data[proton]['Trat1'][i]) / 3)
++        result[result_keys[1]][i] = ((2 * data[proton]['Tperp2'][i] + data[proton]['Trat2'][i]) / 3)
++        result[result_keys[5]][i] = data[proton][val][i] / data[proton]['Trat1'][i]
++        result['proton_1_k'][i] = result[result_keys[0]][i] * factor
++
++        result[result_keys[2]][i] = (2 * data[alpha]['Ta_perp'][i] + data[alpha]['Trat'][i]) / 3
++        result[result_keys[3]][i] = result[result_keys[2]][i] / result[result_keys[0]][i]
++        result[result_keys[6]][i] = data[alpha]['Ta_perp'][i] / data[alpha]['Trat'][i]
++        result['alpha_k'][i] = result[result_keys[2]][i] * factor
+ 
+         if data[proton]['np1'][i] == 0:
+             result[result_keys[4]][i] = 0
+-        else:    
+-            result[result_keys[4]][i] = data[alpha]['na'][i]/data[proton]['np1'][i]
+-          
++        else:
++            result[result_keys[4]][i] = data[alpha]['na'][i] / data[proton]['np1'][i]
++
+     return result
+ 
++
+ def scalar_velocity(
+-    data,
++        data,
+ ):
+-
+-	p = 'proton'
+-	a = 'alpha'
++    global val
++    p = 'proton'
++    a = 'alpha'
+ 
+-	data[p]['v_mag'] = []
+-	data[a]['v_mag'] = []
++    data[p]['v_mag'] = []
++    data[a]['v_mag'] = []
+ 
+-	L_p = len(data[p]['time'])
+-	L_a = len(data[a]['time'])
+-		
+-	for i in range(L_p):
+-		val = (data[p]['vp1_x'][i])**2+(data[p]['vp1_y'][i])**2+(data[p]['vp1_z'][i])**2
+-		if val < 0:
+-			val = 0
+-		else:
+-			pass
+-		data[p]['v_mag'].append(np.sqrt(val))
+-	for i in range(L_a):
+-		val = (data[a]['va_x'][i])**2+(data[a]['va_y'][i])**2+(data[a]['va_z'][i])**2
+-		if val < 0:
+-			val = 0
+-		else:       
+-			pass
+-	data[a]['v_mag'].append(np.sqrt(val))
+-		
+-	return data
+-    
++    L_p = len(data[p]['time'])
++    L_a = len(data[a]['time'])
++
++    for i in range(L_p):
++        val = (data[p]['vp1_x'][i]) ** 2 + (data[p]['vp1_y'][i]) ** 2 + (data[p]['vp1_z'][i]) ** 2
++        if val < 0:
++            val = 0
++        else:
++            pass
++        data[p]['v_mag'].append(np.sqrt(val))
++    for i in range(L_a):
++        val = (data[a]['va_x'][i]) ** 2 + (data[a]['va_y'][i]) ** 2 + (data[a]['va_z'][i]) ** 2
++        if val < 0:
++            val = 0
++        else:
++            pass
++    data[a]['v_mag'].append(np.sqrt(val))
++
++    return data
+Index: codes/features/theta_radial.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import sys\nimport numpy as np\nfrom core.constants import const\nimport matplotlib.pyplot as plt\nfrom scipy.stats import norm\n\nfrom features.smooth import smooth\n\ndef tr(\n    time_,\n    np0_,\n    tp0_,\n    vrp0_,\n    na0_,\n    theta_,\n    wind_radius,\n    psp_radius,\n    fast = True,\n):\n    duration = len(time_)\n\n    # Normalisation Constant\n    Norm =  2.6*(10**1)\n\n    # Initial proton conidition and decay power.\n    np0 = np0_\n    nppower = -1.8\n\n    #Initial proton tempreture and decay power.\n    tp0 = tp0_\n    tppower = -0.74\n\n    # Average velocity and decay power\n    vrp0 = vrp0_\n    vrppower = -0.2\n\n    #Alpha particle parameters\n    ua = 4\n    za = 2\n\n    # Inital alpha condition and decay power.\n    na0 = na0_\n    napower =  -1.8\n\n    n = np.zeros(duration)\n\n    for i in range(duration):\n        if np0[i] == 0:\n            n[i] = 0\n        else:\n            n[i] = na0[i]/np0[i]\n\n    #Compute#\n\n    final_aps = np.zeros(duration)\n\n    if fast == True:\n        sum_range = 50\n        print('Radial prediction computing: Fast mode.')\n    else:\n        sum_range = duration\n        print('Radial prediction computing: Note time for computation may be excessive.')\n\n    for j in range(sum_range):\n        constant = (ua**0.5)*(za**2)\n\n        # Define parameters\n        L = wind_radius[j] - psp_radius[j]\n        l = psp_radius[j]\n        # Step size\n        h = (1 - l)/(10)\n        # Create the numerical grid\n        R = np.arange(l, 1, h)\n\n        # Explicit Euler Method\n        if theta_[j] > 15:\n            s_ = 15\n        else:\n            s_ = theta_[j]\n\n        for k in range(0,len(R) - 1):\n            Tp = (tp0[j])*(R[k]**tppower)\n            ndp = (np0[j])*(R[k]**nppower)\n            vrp = (vrp0[j])*(R[k]**vrppower)\n            nap = (n[j])*(R[k]**(napower-nppower))\n\n            equ_one = Norm*(ndp/(vrp*(Tp**1.5)))*(((constant)/((ua + s_)**1.5)))*(1-s_)*(1+nap*s_)\n            equ_two = (9+ np.log(((Tp**1.5)/(ndp**0.5))*((ua + s_)/(za*(1 + ua)))*((1 +((za*za*nap)/(s_)))**(-0.5))))\n            s_ = s_ + h*equ_one*equ_two\n\n        final_aps[j] = s_\n        print(f\"{(j/sum_range)*100:.2f} %\", end=\"\\r\")\n\n    print(final_aps)\n\n    weights = np.ones_like(final_aps)/float(len(final_aps))\n\n    plt.figure(figsize=(const.x_dim,const.y_dim))\n    plt.title('Histogram of α-proton relative temperatures', fontsize=24)\n    plt.ylabel('Probability density', fontsize=18)\n    plt.xlabel('α-proton relative temperature', fontsize=18)\n    plt.xticks(fontsize=16)\n    plt.yticks(fontsize=16)\n\n    _,bins,_ = plt.hist(smooth(final_aps,50), 150, density=1, alpha=0.75, histtype='step', linewidth=3, fill=False)\n    mu, sigma = norm.fit(final_aps)\n    best_fit_line = norm.pdf(bins,mu,sigma)\n    #plt.plot(bins, best_fit_line)\n\n    #plt.hist(, density=True, bins=50, range=[0, 15], label='MM data modelled')\n    plt.grid()\n    plt.show()\n\n\n\n    return final_aps\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/codes/features/theta_radial.py b/codes/features/theta_radial.py
+--- a/codes/features/theta_radial.py	(revision e9a3d8abcf04c257ec7e7c07c5a62b5724e3bae7)
++++ b/codes/features/theta_radial.py	(date 1648065329903)
+@@ -6,27 +6,28 @@
+ 
+ from features.smooth import smooth
+ 
++
+ def tr(
+-    time_,
+-    np0_,
+-    tp0_,
+-    vrp0_,
+-    na0_,
+-    theta_,
+-    wind_radius,
+-    psp_radius,
+-    fast = True,
++        time_,
++        np0_,
++        tp0_,
++        vrp0_,
++        na0_,
++        theta_,
++        wind_radius,
++        psp_radius,
++        fast=True,
+ ):
+     duration = len(time_)
+ 
+     # Normalisation Constant
+-    Norm =  2.6*(10**1)
++    Norm = 2.6 * (10 ** 1)
+ 
+     # Initial proton conidition and decay power.
+     np0 = np0_
+     nppower = -1.8
+ 
+-    #Initial proton tempreture and decay power.
++    # Initial proton tempreture and decay power.
+     tp0 = tp0_
+     tppower = -0.74
+ 
+@@ -34,13 +35,13 @@
+     vrp0 = vrp0_
+     vrppower = -0.2
+ 
+-    #Alpha particle parameters
++    # Alpha particle parameters
+     ua = 4
+     za = 2
+ 
+     # Inital alpha condition and decay power.
+     na0 = na0_
+-    napower =  -1.8
++    napower = -1.8
+ 
+     n = np.zeros(duration)
+ 
+@@ -48,9 +49,9 @@
+         if np0[i] == 0:
+             n[i] = 0
+         else:
+-            n[i] = na0[i]/np0[i]
++            n[i] = na0[i] / np0[i]
+ 
+-    #Compute#
++    # Compute#
+ 
+     final_aps = np.zeros(duration)
+ 
+@@ -62,13 +63,13 @@
+         print('Radial prediction computing: Note time for computation may be excessive.')
+ 
+     for j in range(sum_range):
+-        constant = (ua**0.5)*(za**2)
++        constant = (ua ** 0.5) * (za ** 2)
+ 
+         # Define parameters
+         L = wind_radius[j] - psp_radius[j]
+         l = psp_radius[j]
+         # Step size
+-        h = (1 - l)/(10)
++        h = (1 - l) / (1000)
+         # Create the numerical grid
+         R = np.arange(l, 1, h)
+ 
+@@ -78,40 +79,39 @@
+         else:
+             s_ = theta_[j]
+ 
+-        for k in range(0,len(R) - 1):
+-            Tp = (tp0[j])*(R[k]**tppower)
+-            ndp = (np0[j])*(R[k]**nppower)
+-            vrp = (vrp0[j])*(R[k]**vrppower)
+-            nap = (n[j])*(R[k]**(napower-nppower))
++        for k in range(0, len(R) - 1):
++            Tp = (tp0[j]) * (R[k] ** tppower)
++            ndp = (np0[j]) * (R[k] ** nppower)
++            vrp = (vrp0[j]) * (R[k] ** vrppower)
++            nap = (n[j]) * (R[k] ** (napower - nppower))
+ 
+-            equ_one = Norm*(ndp/(vrp*(Tp**1.5)))*(((constant)/((ua + s_)**1.5)))*(1-s_)*(1+nap*s_)
+-            equ_two = (9+ np.log(((Tp**1.5)/(ndp**0.5))*((ua + s_)/(za*(1 + ua)))*((1 +((za*za*nap)/(s_)))**(-0.5))))
+-            s_ = s_ + h*equ_one*equ_two
++            equ_one = Norm * (ndp / (vrp * (Tp ** 1.5))) * (((constant) / ((ua + s_) ** 1.5))) * (1 - s_) * (
++                        1 + nap * s_)
++            equ_two = (9 + np.log(((Tp ** 1.5) / (ndp ** 0.5)) * ((ua + s_) / (za * (1 + ua))) * (
++                        (1 + ((za * za * nap) / (s_))) ** (-0.5))))
++            s_ = s_ + h * equ_one * equ_two
+ 
+         final_aps[j] = s_
+-        print(f"{(j/sum_range)*100:.2f} %", end="\r")
++        print(f"{(j / sum_range) * 100:.2f} %", end="\r")
+ 
+     print(final_aps)
+ 
+-    weights = np.ones_like(final_aps)/float(len(final_aps))
++    weights = np.ones_like(final_aps) / float(len(final_aps))
+ 
+-    plt.figure(figsize=(const.x_dim,const.y_dim))
++    plt.figure(figsize=(const.x_dim, const.y_dim))
+     plt.title('Histogram of α-proton relative temperatures', fontsize=24)
+     plt.ylabel('Probability density', fontsize=18)
+     plt.xlabel('α-proton relative temperature', fontsize=18)
+     plt.xticks(fontsize=16)
+     plt.yticks(fontsize=16)
+ 
+-    _,bins,_ = plt.hist(smooth(final_aps,50), 150, density=1, alpha=0.75, histtype='step', linewidth=3, fill=False)
++    _, bins, _ = plt.hist(smooth(final_aps, 50), 150, density=1, alpha=0.75, histtype='step', linewidth=3, fill=False)
+     mu, sigma = norm.fit(final_aps)
+-    best_fit_line = norm.pdf(bins,mu,sigma)
+-    #plt.plot(bins, best_fit_line)
++    best_fit_line = norm.pdf(bins, mu, sigma)
++    # plt.plot(bins, best_fit_line)
+ 
+-    #plt.hist(, density=True, bins=50, range=[0, 15], label='MM data modelled')
++    # plt.hist(, density=True, bins=50, range=[0, 15], label='MM data modelled')
+     plt.grid()
+     plt.show()
+ 
+-
+-
+     return final_aps
+-
+Index: codes/main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import sys\nimport os.path\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.stats import norm\n\nfrom core.constants import const\nfrom core.scrub import scrub\nfrom core import data_import as df\nfrom core import tictoc as tt\n\nfrom features import latlong as lalo\nfrom features import gen_scalars as sc_gen\nfrom features import theta_radial as the_rad\nfrom features.smooth import smooth\n\ntt.tic()\np = 'proton'\na = 'alpha'\nvalid_enc = [4, 6, 7]\nprint('Current loaded encounters:', valid_enc, '\\n')\n\n# Choose which data set(s) to work with\nh = 1\nwhile h > 0:\n    val = input('Full data set or single data set? (F/S)')\n    if (val == 'F' or val == 'f'):\n        enc = 0\n        h = 0\n    elif (val == 'S' or val == 's'):\n        h = 0\n        g = 1\n        while g > 0:\n            value = input('Please enter an encounter:')\n            try:\n                int(value)\n                value_int = True\n            except ValueError:\n                value_int = False\n\n            if value_int == True:\n                if (int(value) in valid_enc):\n                    enc = value\n                    g = 0\n                else:\n                    print('Error: Please enter a valid encounter. \\n')\n            elif value_int == False:\n                print('Error: Please enter a valid integer. \\n')\n            else:\n                print('Error: Could not determine if the input was an integer.')\n    elif (val == ''):\n        print('Error: No input recieved. \\n')\n    else:\n        print('Error: Please make a valid selection.')\nx = const(enc, valid_enc)\nprint(x, '\\n')\nif enc == 0:\n    dum_len = const.num_of_encs\nelse:\n    dum_len = 1\n    encount = const.encounter[0]\n\n# Import data\nmm_data = df.encounter_import()\nprint('\\n')\nsc_data = df.sc_import()\nprint('Data import complete.')\n\n# Generate fill values\n\nmm_len_max = 0\nsc_len_max = 0\n\nfor x in const.encounter:\n    print(x)\n    for y in mm_data[x].keys():\n        if len(mm_data[x][y]['time']) > mm_len_max:\n            mm_len_max = len(mm_data[x][y]['time'])\n            dum_encount = x\n            dum_mm_file = y\n        else:\n            pass\n\n    for y in sc_data[x].keys():\n        if len(sc_data[x][y]) > sc_len_max:\n            sc_len_max = len(sc_data[x][y])\n            dum_encount = x\n            dum_sc_craft = y\n        else:\n            pass\n\nfor x in const.encounter:\n    if mm_len_max > sc_len_max or mm_len_max == sc_len_max:\n        t_ = mm_data[dum_encount][dum_mm_file]['time']\n    elif mm_len_max < sc_len_max:\n        t_ = sc_data[dum_encount][dum_sc_craft]['time']\n\n    for y in mm_data[x].keys():\n        xp = mm_data[x][y]['time']\n        for z in mm_data[x][y].keys():\n            fp = mm_data[x][y][z]\n            mm_data[x][y][z] = np.interp(t_, xp, fp)\n\n    for y in sc_data[x].keys():\n        xp = sc_data[x][y]['time']\n        for z in sc_data[x][y].keys():\n            fp = sc_data[x][y][z]\n            sc_data[x][y][z] = np.interp(t_, xp, fp)\n\n# Combine files if nessesory\nprint('Generating data file...', '\\n')\nsolar_data = {}\nspc_data = {}\nsolar_data[p] = {}\nsolar_data[a] = {}\n\nfor x in range(1):\n    encount = const.encounter[x]\n    for y in range(1):\n        for z in mm_data[encount][const.encounter_names[y + 2 * x]].keys():\n            solar_data[p][z] = []\n        for z in mm_data[encount][const.encounter_names[1 + 2 * x]].keys():\n            solar_data[a][z] = []\n    for y in range(len(const.sc_names)):\n        spc_data[const.sc_names[y]] = {}\n        for z in sc_data[encount][const.sc_names[y]].keys():\n            spc_data[const.sc_names[y]][z] = []\n\nfor x in const.encounter:\n    for y in mm_data[x].keys():\n        for z in mm_data[x][y]:\n            solar_data[p][y].append(mm_data[x][y][z])\n            solar_data[a][y].append(mm_data[x][y][z])\n\n    for y in sc_data[x].keys():\n        for z in sc_data[x][y]:\n            spc_data[y].append(sc_data[x][y][z])\n\n# Data scrubbing\nprint('Scrubbing data...')\nif const.scrub == True:\n    l = -1\n    k = -1\n    for x in solar_data.keys():\n        l = l + 1\n        for y in solar_data[x].keys():\n            k = k + 1\n            val = const.data_units[l][k]\n            solar_data[x][y] = scrub(solar_data[x][y], const.var_min[val], const.var_max[val])\n        print(f\"{(l / len(solar_data)) * 100:.2f} %\", end=\"\\r\")\n        k = -1\n    m = -1\n    n = -1\n    for x in spc_data.keys():\n        m = m + 1\n        for y in spc_data[x].keys():\n            n = n + 1\n            val = const.sc_units[l][k]\n            spc_data[x][y] = scrub(spc_data[x][y], const.var_min[val], const.var_max[val])\n        print(f\"{(m / len(spc_data)) * 100:.2f} %\", end=\"\\r\")\n        n = -1\n    sc_data[encount][const.sc_names[0]] = lalo.latlong_psp(sc_data[encount][const.sc_names[0]])\n    sc_data[encount][const.sc_names[1]] = lalo.latlong_psp(sc_data[encount][const.sc_names[1]])\n    print('Data Scrub Complete', '\\n')\nelse:\n    print('Note: Data scrub suppressed.', '\\n')\n\n# Generate temperatures and velocity magnitudes\nprint('Generating velocity magnitudes...')\nscalar_velocity = sc_gen.scalar_velocity(solar_data)\nprint('Generating temperature file...', '\\n')\nscalar_temps = sc_gen.scalar_temps(solar_data)\n# Generate single time set for the whole data set in approiate unit\nsolar_data['time'] = []\nfor i in range(len(solar_data[p]['time'])):\n    solar_data['time'].append(df.epoch_time(solar_data[p]['time'][i]))\nprint('Note: Files have been generated and loaded in.', '\\n')\n\nplt.figure(figsize=(const.x_dim, const.y_dim))\nplt.plot(solar_data['time'], solar_data[p]['np1'])\nplt.show()\n\nplt.figure(figsize=(const.x_dim, const.y_dim))\nplt.plot(solar_data['time'], scalar_temps['theta_ap'])\nplt.show()\n\nplt.figure(figsize=(const.x_dim, const.y_dim))\nplt.title('Histogram of α-proton relative temperatures', fontsize=22)\nplt.ylabel('Probability density', fontsize=16)\nplt.xlabel('α-proton relative temperature', fontsize=16)\nplt.xticks(fontsize=16)\nplt.yticks(fontsize=16)\nplt.hist(smooth(scalar_temps['theta_ap'], 10), 500, density=True, alpha=0.75, histtype='step', linewidth=3, fill=False)\nplt.xlim([0, 15])\nplt.grid()\nplt.show()\n\n#\ntime = solar_data[p]['time']\ndensity_p = solar_data[p]['np1']\ntemp = scalar_temps['proton_1_k']\nspeed = solar_data[p]['v_mag']\ndensity_a = np.interp(time, solar_data[a]['time'], solar_data[a]['na'])\ntheta = np.interp(time, solar_data[a]['time'], scalar_temps['theta_ap'])\nwind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']), fill_value=1, dtype=int)\npsp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])\n\n#final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, False)\n\ntt.toc()\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/codes/main.py b/codes/main.py
+--- a/codes/main.py	(revision e9a3d8abcf04c257ec7e7c07c5a62b5724e3bae7)
++++ b/codes/main.py	(date 1647964258139)
+@@ -72,11 +72,11 @@
+ sc_len_max = 0
+ 
+ for x in const.encounter:
+-    print(x)
++
+     for y in mm_data[x].keys():
+         if len(mm_data[x][y]['time']) > mm_len_max:
+             mm_len_max = len(mm_data[x][y]['time'])
+-            dum_encount = x
++            dum_encount_1 = x
+             dum_mm_file = y
+         else:
+             pass
+@@ -84,16 +84,17 @@
+     for y in sc_data[x].keys():
+         if len(sc_data[x][y]) > sc_len_max:
+             sc_len_max = len(sc_data[x][y])
+-            dum_encount = x
++            dum_encount_2 = x
+             dum_sc_craft = y
+         else:
+             pass
+ 
+ for x in const.encounter:
++
+     if mm_len_max > sc_len_max or mm_len_max == sc_len_max:
+-        t_ = mm_data[dum_encount][dum_mm_file]['time']
++        t_ = mm_data[dum_encount_1][dum_mm_file]['time']
+     elif mm_len_max < sc_len_max:
+-        t_ = sc_data[dum_encount][dum_sc_craft]['time']
++        t_ = sc_data[dum_encount_2][dum_sc_craft]['time']
+ 
+     for y in mm_data[x].keys():
+         xp = mm_data[x][y]['time']
+@@ -121,20 +122,28 @@
+             solar_data[p][z] = []
+         for z in mm_data[encount][const.encounter_names[1 + 2 * x]].keys():
+             solar_data[a][z] = []
++
++for x in const.encounter:
+     for y in range(len(const.sc_names)):
+         spc_data[const.sc_names[y]] = {}
+         for z in sc_data[encount][const.sc_names[y]].keys():
+             spc_data[const.sc_names[y]][z] = []
+ 
++i = -2
+ for x in const.encounter:
+-    for y in mm_data[x].keys():
+-        for z in mm_data[x][y]:
+-            solar_data[p][y].append(mm_data[x][y][z])
+-            solar_data[a][y].append(mm_data[x][y][z])
++    i = i + 2
++    for y in range(1):
++        for z in mm_data[x][const.encounter_names[2*y + i]]:
++            for w in range(len(mm_data[x][const.encounter_names[2*y + i]][z])):
++                solar_data[p][z].append(mm_data[x][const.encounter_names[2*y + i]][z][w])
++        for z in mm_data[x][const.encounter_names[1 + 2*y + i]]:
++            for w in range(len(mm_data[x][const.encounter_names[1 + 2*y + i]][z])):
++                solar_data[a][z].append(mm_data[x][const.encounter_names[1+2*y + i]][z][w])
+ 
+     for y in sc_data[x].keys():
+         for z in sc_data[x][y]:
+-            spc_data[y].append(sc_data[x][y][z])
++            for w in range(len(sc_data[x][y][z])):
++                spc_data[y][z].append(sc_data[x][y][z][w])
+ 
+ # Data scrubbing
+ print('Scrubbing data...')
+@@ -176,9 +185,6 @@
+     solar_data['time'].append(df.epoch_time(solar_data[p]['time'][i]))
+ print('Note: Files have been generated and loaded in.', '\n')
+ 
+-plt.figure(figsize=(const.x_dim, const.y_dim))
+-plt.plot(solar_data['time'], solar_data[p]['np1'])
+-plt.show()
+ 
+ plt.figure(figsize=(const.x_dim, const.y_dim))
+ plt.plot(solar_data['time'], scalar_temps['theta_ap'])
+@@ -205,6 +211,6 @@
+ wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']), fill_value=1, dtype=int)
+ psp_radius = np.interp(time, spc_data[const.sc_names[0]]['time'], spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
+ 
+-#final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, False)
++final_theta = the_rad.tr(time, density_p, temp, speed, density_a, theta, wind_radius, psp_radius, False)
+ 
+ tt.toc()
+Index: codes/core/constants.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#---Constants & Input---#\nimport numpy as np\ndef const(\n        enc,\n        valid_enc,\n):\n        #Min and Max Values#\n        density_max = 10**25\n        density_min = 10**-6\n\n        speed_max = 10**3\n        speed_min = 0\n\n        b_field_max = 10**8\n        b_field_min = 0\n\n        temp_max = 10**8\n        temp_min = 0\n\n        chi_squared_max = 5000\n        chi_squared_min = 0\n\n        dr_max = 1\n        dr_min = 0\n\n        dv_max = 10\n        dv_min = 0\n\n        dT_perp_max = 10\n        dT_perp_min = 0\n\n        bmag_max = 9900  \n        bmag_min = 0\n\n        v_gse_max = 99900\n        v_gse_min = 0\n\n        dens_add_max = 990\n        dens_add_min = 0\n\n        nanp_max = 9\n        nanp_min = 0\n\n        presure_max = 90\n        presure_min = 0\n\n        c_max = 10**6\n        c_min = 0\n                             \n        const.error_files = False \n        const.output = False\n        const.scrub = False\n                \n        const.x_dim = 10\n        const.y_dim = 10\n\n        #------------------------------------------------------------------------------#\n        \n        #const.str_dir = \"/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/\"\n        #const.str_save = \"/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/\"\n        \n        const.str_dir = \"/home/elliot/Documents/GitHub/Collisionality_v2/data/load/\"\n        const.str_save = \"/home/elliot/Documents/GitHub/Collisionality_v2/data/save/\"\n\n        #const.str_dir = \"D:/My Drive/Github/Collisionality_v2/data/load/\"\n        #const.str_save = \"D:/My Drive/Github/Collisionality_v2/data/save/\"\n\n        if enc == 0:\n                L = len(valid_enc)\n                encounter = np.zeros(L)\n                const.encounter = []\n                for i in range(L):\n                        encounter[i] = valid_enc[i]\n                        const.encounter.append('E' + str(int(encounter[i])))\n        else:\n                L = 1\n                encounter = np.zeros(L)\n                encounter[0] = enc\n                const.encounter = []\n                const.encounter.append('E' + str(int(encounter[0])))\n        const.num_of_encs = L\n        const.encounter_names = []\n\n        for i in range(L):\n                val = (const.encounter[i])\n                const.encounter_names.append(val+'_protons.csv')\n                const.encounter_names.append(val+'_alphas.csv')\n\n        const.sc_names = []\n        const.sc_names.append('PSP.csv')\n        const.sc_names.append('Wind_Orbit.csv')\n        const.sc_names.append('PSP_Orbit.csv')\n        const.sc_names.append('Wind_Outside_Range_Hour.csv')\n        const.sc_names.append('Wind_Outside_Range_Min.csv')\n\n        const.num_of_sc = len(const.sc_names)\n\n        \n        #------------------------------------------------------------------------------#\n\n        const.num_files = len(const.encounter_names)+len(const.sc_names)\n\n        const.data_units= {}\n                \n        const.data_units[0] = [0,1,1,2,2,2,3,3,3,2,4,4,4,4] \n        const.data_units[1] = [0,1,2,2,2,3,3,3,4,4]\n                \n        const.data_units[2] = [0,5,1,8,8,5,5,5,1,8,6,7]\n        const.data_units[3] = [0,5,1,8,8,5,5,5,1,8,6,7]\n\n        const.sc_units = {}\n\n        const.sc_units[0] = [0,0,0,0,3,3,3,3,2,2,2,2,0,0,0,0]\n        const.sc_units[1] = [0,0,0,0,3,3,3,3,2,0,0,0,0]\n\n        const.sc_units[2] = [0,0,0,0,0,0]\n        const.sc_units[3] = const.sc_units[1]\n        const.sc_units[4] = [0,9,9,9,9,9,9,9,9,2,10,10,2,11,14,12,13,11,11,11]\n\n        const.var_max =[(10**30),density_max,speed_max,b_field_max,temp_max,chi_squared_max, dr_max, dv_max, dT_perp_max, bmag_max,v_gse_max,dens_add_max,nanp_max,presure_max,c_max]\n                \n        const.var_min =[0,density_min,speed_min,b_field_min,temp_min,chi_squared_min,dr_min, dv_min, dT_perp_min, bmag_min,v_gse_min,dens_add_min,nanp_min,presure_min,c_min]\n\n                \n        message = 'Note: Constants imported.'\n\n        return message\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/codes/core/constants.py b/codes/core/constants.py
+--- a/codes/core/constants.py	(revision e9a3d8abcf04c257ec7e7c07c5a62b5724e3bae7)
++++ b/codes/core/constants.py	(date 1647963553597)
+@@ -1,127 +1,135 @@
+-#---Constants & Input---#
++# ---Constants & Input---#
+ import numpy as np
++
++
+ def const(
+         enc,
+         valid_enc,
+ ):
+-        #Min and Max Values#
+-        density_max = 10**25
+-        density_min = 10**-6
++    # Min and Max Values#
++    density_max = 10 ** 20
++    density_min = 10 ** -6
+ 
+-        speed_max = 10**3
+-        speed_min = 0
++    speed_max = 10 ** 3
++    speed_min = 0
+ 
+-        b_field_max = 10**8
+-        b_field_min = 0
++    b_field_max = 10 ** 6
++    b_field_min = 0
+ 
+-        temp_max = 10**8
+-        temp_min = 0
++    temp_max = 10 ** 6
++    temp_min = 0
+ 
+-        chi_squared_max = 5000
+-        chi_squared_min = 0
++    chi_squared_max = 5000
++    chi_squared_min = 0
+ 
+-        dr_max = 1
+-        dr_min = 0
++    dr_max = 1
++    dr_min = 0
+ 
+-        dv_max = 10
+-        dv_min = 0
++    dv_max = 10
++    dv_min = 0
+ 
+-        dT_perp_max = 10
+-        dT_perp_min = 0
++    dT_perp_max = 10
++    dT_perp_min = 0
+ 
+-        bmag_max = 9900  
+-        bmag_min = 0
++    bmag_max = 9900
++    bmag_min = 0
+ 
+-        v_gse_max = 99900
+-        v_gse_min = 0
++    v_gse_max = 99900
++    v_gse_min = 0
+ 
+-        dens_add_max = 990
+-        dens_add_min = 0
++    dens_add_max = 990
++    dens_add_min = 0
+ 
+-        nanp_max = 9
+-        nanp_min = 0
++    nanp_max = 9
++    nanp_min = 0
+ 
+-        presure_max = 90
+-        presure_min = 0
++    presure_max = 90
++    presure_min = 0
+ 
+-        c_max = 10**6
+-        c_min = 0
+-                             
+-        const.error_files = False 
+-        const.output = False
+-        const.scrub = False
+-                
+-        const.x_dim = 10
+-        const.y_dim = 10
++    c_max = 10 ** 6
++    c_min = 0
++
++    const.error_files = False
++    const.output = False
++    const.scrub = True
++
++    const.x_dim = 10
++    const.y_dim = 10
+ 
+-        #------------------------------------------------------------------------------#
+-        
+-        #const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
+-        #const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
+-        
+-        const.str_dir = "/home/elliot/Documents/GitHub/Collisionality_v2/data/load/"
+-        const.str_save = "/home/elliot/Documents/GitHub/Collisionality_v2/data/save/"
++    # ------------------------------------------------------------------------------#
++
++    # const.str_dir = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/load/"
++    # const.str_save = "/Volumes/GoogleDrive/My Drive/Github/Collisionality_v2/data/save/"
++
++    const.str_dir = "/home/elliot/Documents/GitHub/Collisionality_v2/data/load/"
++    const.str_save = "/home/elliot/Documents/GitHub/Collisionality_v2/data/save/"
+ 
+-        #const.str_dir = "D:/My Drive/Github/Collisionality_v2/data/load/"
+-        #const.str_save = "D:/My Drive/Github/Collisionality_v2/data/save/"
++    # const.str_dir = "D:/My Drive/Github/Collisionality_v2/data/load/"
++    # const.str_save = "D:/My Drive/Github/Collisionality_v2/data/save/"
+ 
+-        if enc == 0:
+-                L = len(valid_enc)
+-                encounter = np.zeros(L)
+-                const.encounter = []
+-                for i in range(L):
+-                        encounter[i] = valid_enc[i]
+-                        const.encounter.append('E' + str(int(encounter[i])))
+-        else:
+-                L = 1
+-                encounter = np.zeros(L)
+-                encounter[0] = enc
+-                const.encounter = []
+-                const.encounter.append('E' + str(int(encounter[0])))
+-        const.num_of_encs = L
+-        const.encounter_names = []
++    if enc == 0:
++        L = len(valid_enc)
++        encounter = np.zeros(L)
++        const.encounter = []
++        for i in range(L):
++            encounter[i] = valid_enc[i]
++            const.encounter.append('E' + str(int(encounter[i])))
++    else:
++        L = 1
++        encounter = np.zeros(L)
++        encounter[0] = enc
++        const.encounter = []
++        const.encounter.append('E' + str(int(encounter[0])))
++    const.num_of_encs = L
++    const.encounter_names = []
++    const.encounter_p = []
++    const.encounter_a = []
+ 
+-        for i in range(L):
+-                val = (const.encounter[i])
+-                const.encounter_names.append(val+'_protons.csv')
+-                const.encounter_names.append(val+'_alphas.csv')
++    for i in range(L):
++        val = (const.encounter[i])
++        const.encounter_names.append(val + '_protons.csv')
++        const.encounter_names.append(val + '_alphas.csv')
+ 
+-        const.sc_names = []
+-        const.sc_names.append('PSP.csv')
+-        const.sc_names.append('Wind_Orbit.csv')
+-        const.sc_names.append('PSP_Orbit.csv')
+-        const.sc_names.append('Wind_Outside_Range_Hour.csv')
+-        const.sc_names.append('Wind_Outside_Range_Min.csv')
++    for i in range(int(L / 2)):
++        const.encounter_p.append(const.encounter_names[2 * i])
++        const.encounter_a.append(const.encounter_names[2 * i + 1])
++
++    const.sc_names = []
++    const.sc_names.append('PSP.csv')
++    const.sc_names.append('Wind_Orbit.csv')
++    const.sc_names.append('PSP_Orbit.csv')
++    const.sc_names.append('Wind_Outside_Range_Hour.csv')
++    const.sc_names.append('Wind_Outside_Range_Min.csv')
+ 
+-        const.num_of_sc = len(const.sc_names)
++    const.num_of_sc = len(const.sc_names)
+ 
+-        
+-        #------------------------------------------------------------------------------#
++    # ------------------------------------------------------------------------------#
+ 
+-        const.num_files = len(const.encounter_names)+len(const.sc_names)
++    const.num_files = len(const.encounter_names) + len(const.sc_names)
+ 
+-        const.data_units= {}
+-                
+-        const.data_units[0] = [0,1,1,2,2,2,3,3,3,2,4,4,4,4] 
+-        const.data_units[1] = [0,1,2,2,2,3,3,3,4,4]
+-                
+-        const.data_units[2] = [0,5,1,8,8,5,5,5,1,8,6,7]
+-        const.data_units[3] = [0,5,1,8,8,5,5,5,1,8,6,7]
++    const.data_units = {}
++
++    const.data_units[0] = [0, 1, 1, 2, 2, 2, 3, 3, 3, 2, 4, 4, 4, 4]
++    const.data_units[1] = [0, 1, 2, 2, 2, 3, 3, 3, 4, 4]
++
++    const.data_units[2] = [0, 5, 1, 8, 8, 5, 5, 5, 1, 8, 6, 7]
++    const.data_units[3] = [0, 5, 1, 8, 8, 5, 5, 5, 1, 8, 6, 7]
+ 
+-        const.sc_units = {}
++    const.sc_units = {}
+ 
+-        const.sc_units[0] = [0,0,0,0,3,3,3,3,2,2,2,2,0,0,0,0]
+-        const.sc_units[1] = [0,0,0,0,3,3,3,3,2,0,0,0,0]
++    const.sc_units[0] = [0, 0, 0, 0, 3, 3, 3, 3, 2, 2, 2, 2, 0, 0, 0, 0]
++    const.sc_units[1] = [0, 0, 0, 0, 3, 3, 3, 3, 2, 0, 0, 0, 0]
+ 
+-        const.sc_units[2] = [0,0,0,0,0,0]
+-        const.sc_units[3] = const.sc_units[1]
+-        const.sc_units[4] = [0,9,9,9,9,9,9,9,9,2,10,10,2,11,14,12,13,11,11,11]
++    const.sc_units[2] = [0, 0, 0, 0, 0, 0]
++    const.sc_units[3] = const.sc_units[1]
++    const.sc_units[4] = [0, 9, 9, 9, 9, 9, 9, 9, 9, 2, 10, 10, 2, 11, 14, 12, 13, 11, 11, 11]
+ 
+-        const.var_max =[(10**30),density_max,speed_max,b_field_max,temp_max,chi_squared_max, dr_max, dv_max, dT_perp_max, bmag_max,v_gse_max,dens_add_max,nanp_max,presure_max,c_max]
+-                
+-        const.var_min =[0,density_min,speed_min,b_field_min,temp_min,chi_squared_min,dr_min, dv_min, dT_perp_min, bmag_min,v_gse_min,dens_add_min,nanp_min,presure_min,c_min]
++    const.var_max = [(10 ** 30), density_max, speed_max, b_field_max, temp_max, chi_squared_max, dr_max, dv_max,
++                     dT_perp_max, bmag_max, v_gse_max, dens_add_max, nanp_max, presure_max, c_max]
++
++    const.var_min = [0, density_min, speed_min, b_field_min, temp_min, chi_squared_min, dr_min, dv_min, dT_perp_min,
++                     bmag_min, v_gse_min, dens_add_min, nanp_min, presure_min, c_min]
+ 
+-                
+-        message = 'Note: Constants imported.'
++    message = 'Note: Constants imported.'
+ 
+-        return message
++    return message
