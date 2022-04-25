@@ -233,6 +233,15 @@ for i in range(len(solar_data[p]['time'])):
     time.append(df.epoch_time(solar_data[p]['time'][i]))
 print('Note: Files have been generated and loaded in.', '\n')
 
+theta = scalar_temps['theta_ap']
+data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps)
+graph_gen.graph_function(theta, data_norm)
+
+solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
+
+print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
+theta_predict = graph_gen.make_theta_vals(solar_sort[const.R], spc_sort[const.R], temp_sort[const.R])
+graph_gen.graph_function(theta, theta_predict, str(const.R))
 
 
 tt.toc()
