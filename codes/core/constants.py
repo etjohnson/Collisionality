@@ -145,7 +145,7 @@ def const(
 
     const.bin_width = 0.02
 
-    const.dp_number = 1
+    const.dp_number = 1     # max 3 dp
     const.predict = True
     const.R = 0.1
     const.wind_radius = 0.3
