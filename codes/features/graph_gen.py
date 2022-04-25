@@ -13,22 +13,16 @@ from matplotlib import pyplot
 
 
 def graph_function(
-        solar_data,
-        spc_data,
-        scalar_temps,
-        theta_vals=0,
+        theta_vals,
+        final_theta_vals,
         r_value='0.1 - 0.2',
 ):
     p = 'proton'
     a = 'alpha'
 
     X = np.linspace(0, 15, 1000)
-    print(theta_vals)
-    if isinstance(theta_vals, int):
-        val = scalar_temps['theta_ap']
-    else:
-        val = theta_vals
-    arg_ = smooth(val, const.arg_smooth)
+
+    arg_ = smooth(theta_vals, const.arg_smooth)
 
     bins = int((max(arg_) - min(arg_)) / const.bin_width)
 
@@ -55,26 +49,8 @@ def graph_function(
     plt.grid()
     plt.show()
 
-    #
-    time = solar_data[p]['time']
-    density_p = solar_data[p]['np1']
-    density_ap = scalar_temps['dens_ap']
-    temp = scalar_temps['proton_1_k']
-    speed = solar_data[p]['v_mag']
-    theta = scalar_temps['theta_ap']
-    wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']),
-                          fill_value=const.wind_radius,
-                          dtype=float)
-    psp_radius = spc_data[const.sc_names[0]][
-        'RADIAL_DISTANCE_AU']  # np.interp(time, spc_data[const.sc_names[0]]['time'],
-    # spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU'])
 
-    if const.predict == True:
-        final_theta = theta_loop(time, wind_radius, psp_radius, density_p, density_ap,
-                                 speed,
-                                 temp, theta)
-    else:
-        final_theta = 0
+    final_theta = final_theta_vals
 
     arg_v2 = smooth(final_theta, const.arg_smooth)
 
@@ -135,9 +111,8 @@ def radius_split(
         spc_data,
         scalar_temps,
 ):
-    time = solar_data['proton']['time']
+
     psp = const.sc_names[0]
-    wind = const.sc_names[1]
     dp_number = const.dp_number
 
     solar_sorted_data = {}
@@ -185,34 +160,27 @@ def radius_split(
     return solar_sorted_data, spc_sorted_data, temp_sorted_data
 
 
-def make_hist(
-        data,
+def make_theta_vals(
+    solar_data,
+    spc_data,
+    scalar_temps,
+
 ):
-    plt.figure(figsize=(const.x_dim, const.y_dim))
+    p = 'proton'
+    a = 'alpha'
 
-    X = np.linspace(0, 15, 1000)
+    time = solar_data[p]['time']
+    density_p = solar_data[p]['np1']
+    density_ap = scalar_temps['dens_ap']
+    temp = scalar_temps['proton_1_k']
+    speed = solar_data[p]['v_mag']
+    theta = scalar_temps['theta_ap']
+    wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']),
+                          fill_value=const.wind_radius,
+                          dtype=float)
+    psp_radius = spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU']
 
-    arg_ = smooth(data, const.arg_smooth)
 
-    bins = int((max(arg_) - min(arg_)) / const.bin_width)
+    final_theta = theta_loop(time, wind_radius, psp_radius, density_p, density_ap, speed, temp, theta)
 
-    hist = np.histogram(arg_, bins=bins)
-    hist_dist = scipy.stats.rv_histogram(hist)
-    plt.plot(X, smooth(hist_dist.pdf(X), const.pdf_smooth),
-             label=r'$\theta_{\alpha p} \, {\rm AU})$',
-             color='black', linewidth=3)
-
-    plt.title(r'Histogram of $\alpha$-proton relative temperatures',
-              fontsize=const.title_size,
-              fontname=const.font_family)
-    plt.ylabel('Probability density', fontsize=const.label_size,
-               fontname=const.font_family)
-    plt.xlabel(r'$\alpha$-proton relative temperature', fontsize=const.label_size,
-               fontname=const.font_family)
-    plt.xticks(fontsize=const.tick_size)
-    plt.yticks(fontsize=const.tick_size)
-    plt.legend(loc='upper right',
-               prop={'size': const.legend_size, 'family': const.font_family})
-    plt.grid()
-
-    return
+    return final_theta

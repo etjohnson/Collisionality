@@ -81,11 +81,14 @@ def const(
         const.encounter.append('E' + str(int(encounter[0])))
     const.num_of_encs = L
     const.encounter_names = []
+    const.encounter_errors = []
 
     for i in range(L):
         val = (const.encounter[i])
         const.encounter_names.append(val + '_protons.csv')
         const.encounter_names.append(val + '_alphas.csv')
+        const.encounter_errors.append(val + '_proton_errors.csv')
+        const.encounter_errors.append(val + '_alpha_errors.csv')
 
     const.sc_names = []
     const.sc_names.append('PSP.csv')
@@ -105,8 +108,10 @@ def const(
     const.data_units[0] = [0, 1, 1, 2, 2, 2, 3, 3, 3, 2, 4, 4, 4, 4]
     const.data_units[1] = [0, 1, 2, 2, 2, 3, 3, 3, 4, 4]
 
-    const.data_units[2] = [0, 5, 1, 8, 8, 5, 5, 5, 1, 8, 6, 7]
-    const.data_units[3] = [0, 5, 1, 8, 8, 5, 5, 5, 1, 8, 6, 7]
+    const.error_units = {}
+
+    const.error_units[0] = [0, 5, 1, 8, 8, 5, 5, 5, 1, 8, 6, 7]
+    const.error_units[1] = [0, 5, 1, 8, 8, 5, 5, 5, 1, 8, 6, 7]
 
     const.sc_units = {}
 

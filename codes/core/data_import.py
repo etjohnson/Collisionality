@@ -30,7 +30,9 @@ def sc_import(
         for key in const.sc_names:
             val = str(const.encounter[i] + '/Position/' + key)
             files[const.encounter[i]][key] = file_import(val, const.str_dir)
-    print('\n', 'Warning: Please ensure all data is in the correct time range for the encounter.', '\n')
+    print('\n',
+          'Warning: Please ensure all data is in the correct time range for the encounter.',
+          '\n')
     return files
 
 
@@ -73,3 +75,19 @@ def epoch_time(
     res = datetime.datetime.fromtimestamp(epoch_time)
 
     return res
+
+
+def error_import(
+
+):
+    files = {}
+
+    for i in range(const.num_of_encs):
+        print('Error File: ' + const.encounter[i])
+        files[const.encounter[i]] = {}
+        for j in range(2):
+            val = str(const.encounter[i] + '/' + const.encounter_errors[j + 2 * i])
+            files[const.encounter[i]][const.encounter_errors[j + 2 * i]] = file_import(
+                val,
+                const.str_dir)
+    return files

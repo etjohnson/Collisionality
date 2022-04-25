@@ -62,6 +62,7 @@ else:
 
 # Import data
 mm_data = df.encounter_import()
+er_data = df.error_import()
 print('\n')
 sc_data = df.sc_import()
 print('Data import complete.')
@@ -69,6 +70,7 @@ print('Data import complete.')
 # Generate fill values
 
 mm_len_max = 0
+er_len_max = 0
 sc_len_max = 0
 
 for x in const.encounter:
@@ -77,6 +79,14 @@ for x in const.encounter:
             mm_len_max = len(mm_data[x][y]['time'])
             dum_encount = x
             dum_mm_file = y
+        else:
+            pass
+
+    for y in er_data[x].keys():
+        if len(er_data[x][y]['time']) > er_len_max:
+            er_len_max = len(er_data[x][y]['time'])
+            dum_encount = x
+            dum_er_file = y
         else:
             pass
 
@@ -89,9 +99,12 @@ for x in const.encounter:
             pass
 
 for x in const.encounter:
-    if mm_len_max > sc_len_max or mm_len_max == sc_len_max:
+    max_len = max(mm_len_max, er_len_max, sc_len_max)
+    if max_len == mm_len_max:
         t_ = mm_data[dum_encount][dum_mm_file]['time']
-    elif mm_len_max < sc_len_max:
+    elif max_len == er_len_max:
+        t_ = er_data[dum_encount][dum_er_file]['time']
+    elif max_len == sc_len_max:
         t_ = sc_data[dum_encount][dum_sc_craft]['time']
 
     for y in mm_data[x].keys():
@@ -99,6 +112,12 @@ for x in const.encounter:
         for z in mm_data[x][y].keys():
             fp = mm_data[x][y][z]
             mm_data[x][y][z] = np.interp(t_, xp, fp)
+
+    for y in er_data[x].keys():
+        xp = er_data[x][y]['time']
+        for z in er_data[x][y].keys():
+            fp = er_data[x][y][z]
+            er_data[x][y][z] = np.interp(t_, xp, fp)
 
     for y in sc_data[x].keys():
         xp = sc_data[x][y]['time']
@@ -109,9 +128,12 @@ for x in const.encounter:
 # Combine files if nessesory
 print('Generating data file...', '\n')
 solar_data = {}
+error_data = {}
 spc_data = {}
 solar_data[p] = {}
 solar_data[a] = {}
+error_data[p] = {}
+error_data[a] = {}
 
 for x in range(1):
     encount = const.encounter[x]
@@ -120,6 +142,13 @@ for x in range(1):
             solar_data[p][z] = []
         for z in mm_data[encount][const.encounter_names[1 + 2 * x]].keys():
             solar_data[a][z] = []
+
+    for y in range(1):
+        for z in er_data[encount][const.encounter_errors[y + 2 * x]].keys():
+            error_data[p][z] = []
+        for z in er_data[encount][const.encounter_errors[1 + 2 * x]].keys():
+            error_data[a][z] = []
+
     for y in range(len(const.sc_names)):
         spc_data[const.sc_names[y]] = {}
         for z in sc_data[encount][const.sc_names[y]].keys():
@@ -134,6 +163,15 @@ for x in range(dum_len):
         for z in solar_data[a].keys():
             for w in range(len(mm_data[encount][const.encounter_names[2 * x + 1]][z])):
                 solar_data[a][z].append(mm_data[encount][const.encounter_names[2 * x + 1]][z][w])
+
+    for y in range(1):
+        for z in error_data[p].keys():
+            for w in range(len(er_data[encount][const.encounter_errors[y + 2 * x]][z])):
+                error_data[p][z].append(er_data[encount][const.encounter_errors[y + 2 * x]][z][w])
+        for z in error_data[a].keys():
+            for w in range(len(er_data[encount][const.encounter_errors[2 * x + 1]][z])):
+                error_data[a][z].append(er_data[encount][const.encounter_errors[2 * x + 1]][z][w])
+
     for y in const.sc_names:
         for z in spc_data[y].keys():
             for w in range(len(sc_data[encount][y][z])):
@@ -154,6 +192,21 @@ if const.scrub == True:
         k = -1
     m = -1
     n = -1
+
+    l = -1
+    k = -1
+    for x in error_data.keys():
+        l = l + 1
+        for y in error_data[x].keys():
+            k = k + 1
+            val = const.error_units[l][k]
+            error_data[x][y] = scrub(error_data[x][y], const.var_min[val],
+                                     const.var_max[val])
+        print(f"{(l / len(error_data)) * 100:.2f} %", end="\r")
+        k = -1
+    m = -1
+    n = -1
+
     for x in spc_data.keys():
         m = m + 1
         for y in spc_data[x].keys():
@@ -180,13 +233,6 @@ for i in range(len(solar_data[p]['time'])):
     time.append(df.epoch_time(solar_data[p]['time'][i]))
 print('Note: Files have been generated and loaded in.', '\n')
 
-data_norm = graph_gen.graph_function(solar_data, spc_data, scalar_temps)
-graph_gen.make_hist(data_norm)
-graph_gen.graph_function(solar_data, spc_data, scalar_temps, data_norm)
-solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
-
-print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
-graph_gen.graph_function(solar_sort[const.R], spc_sort[const.R], temp_sort[const.R], str(const.R))
 
 
 tt.toc()
