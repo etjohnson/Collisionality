@@ -16,6 +16,7 @@ def graph_function(
         theta_vals,
         final_theta_vals,
         r_value='0.1 - 0.2',
+        wind_value='1.0',
 ):
     p = 'proton'
     a = 'alpha'
@@ -49,7 +50,6 @@ def graph_function(
     plt.grid()
     plt.show()
 
-
     final_theta = final_theta_vals
 
     arg_v2 = smooth(final_theta, const.arg_smooth)
@@ -65,7 +65,7 @@ def graph_function(
              label=r'$\theta_{\alpha p}(' + r_value + r'\, {\rm AU})$',
              color='blue', linewidth=3, linestyle='dashed')
     plt.plot(X, smooth(hist_dist_v2.pdf(X), const.pdf_smooth),
-             label=r'$\theta_{\alpha p}( 1 \, {\rm AU})$',
+             label=r'$\theta_{\alpha p}(' + wind_value + r'\, {\rm AU})$',
              color='black', linewidth=3)
     plt.title(r'Histogram of $\alpha$-proton relative temperatures',
               fontsize=const.title_size,
@@ -111,7 +111,6 @@ def radius_split(
         spc_data,
         scalar_temps,
 ):
-
     psp = const.sc_names[0]
     dp_number = const.dp_number
 
@@ -161,9 +160,11 @@ def radius_split(
 
 
 def make_theta_vals(
-    solar_data,
-    spc_data,
-    scalar_temps,
+        solar_data,
+        spc_data,
+        scalar_temps,
+        wind_radius_,
+        theta_=False,
 
 ):
     p = 'proton'
@@ -174,13 +175,91 @@ def make_theta_vals(
     density_ap = scalar_temps['dens_ap']
     temp = scalar_temps['proton_1_k']
     speed = solar_data[p]['v_mag']
-    theta = scalar_temps['theta_ap']
+    if isinstance(theta_, bool):
+        theta = scalar_temps['theta_ap']
+    else:
+        theta = theta_
     wind_radius = np.full(shape=len(spc_data[const.sc_names[1]]['time']),
-                          fill_value=const.wind_radius,
+                          fill_value=wind_radius_,
                           dtype=float)
     psp_radius = spc_data[const.sc_names[0]]['RADIAL_DISTANCE_AU']
 
-
-    final_theta = theta_loop(time, wind_radius, psp_radius, density_p, density_ap, speed, temp, theta)
+    final_theta = theta_loop(time, wind_radius, psp_radius, density_p, density_ap, speed,
+                             temp, theta)
 
     return final_theta
+
+
+def graph_multi_function(
+        theta_vals,
+        final_theta_vals,
+        r_value='0.1 - 0.2',
+):
+    p = 'proton'
+    a = 'alpha'
+
+    X = np.linspace(0, 15, 1000)
+
+    arg_ = smooth(theta_vals, const.arg_smooth)
+
+    bins = int((max(arg_) - min(arg_)) / const.bin_width)
+
+    hist = np.histogram(arg_, bins=bins)
+    hist_dist = scipy.stats.rv_histogram(hist)
+
+    plt.figure(figsize=(const.x_dim, const.y_dim))
+    plt.hist(arg_, density=True, bins=bins, alpha=const.transparent)
+    plt.plot(X, smooth(hist_dist.pdf(X), const.pdf_smooth),
+             label=r'$\theta_{\alpha p}(' + r_value + r'\, {\rm AU})$',
+             color='black', linewidth=3)
+    plt.legend(loc='upper right', prop={'size': const.legend_size})
+    plt.title(r'Histogram of $\alpha$-proton relative temperatures',
+              fontsize=const.title_size,
+              fontname=const.font_family)
+    plt.ylabel('Probability density', fontsize=const.label_size,
+               fontname=const.font_family)
+    plt.xlabel(r'$\alpha$-proton relative temperature', fontsize=const.label_size,
+               fontname=const.font_family)
+    plt.xticks(fontsize=const.tick_size)
+    plt.yticks(fontsize=const.tick_size)
+    plt.xlim([0, 15])
+    plt.ylim([0, const.y_tick])
+    plt.grid()
+    plt.show()
+
+    plt.figure(figsize=(const.x_dim, const.y_dim))
+
+    plt.plot(X, smooth(hist_dist.pdf(X), const.pdf_smooth),
+             label=r'$\theta_{\alpha p}(' + r_value + r'\, {\rm AU})$',
+             color='blue', linewidth=3, linestyle='dashed')
+
+    for radius in final_theta_vals.keys():
+        final_theta = final_theta_vals[radius]
+
+        arg_v2 = smooth(final_theta, const.arg_smooth)
+
+        bins_v2 = int((max(arg_v2) - min(arg_v2)) / const.bin_width)
+
+        hist_v2 = np.histogram(arg_v2, bins=bins_v2)
+        hist_dist_v2 = scipy.stats.rv_histogram(hist_v2)
+        plt.plot(X, smooth(hist_dist_v2.pdf(X), const.pdf_smooth),
+                 label=r'$\theta_{\alpha p}(' + str(radius) + r'\, {\rm AU})$',
+                 color='black', linewidth=1)
+
+    plt.title(r'Histogram of $\alpha$-proton relative temperatures',
+              fontsize=const.title_size,
+              fontname=const.font_family)
+    plt.ylabel('Probability density', fontsize=const.label_size,
+               fontname=const.font_family)
+    plt.xlabel(r'$\alpha$-proton relative temperature', fontsize=const.label_size,
+               fontname=const.font_family)
+    plt.xticks(fontsize=const.tick_size)
+    plt.yticks(fontsize=const.tick_size)
+    plt.legend(loc='upper right',
+               prop={'size': const.legend_size, 'family': const.font_family})
+    plt.xlim([0, 15])
+    plt.ylim([0, const.y_tick])
+    plt.grid()
+    plt.show()
+
+    return

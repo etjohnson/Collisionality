@@ -96,6 +96,7 @@ def const(
     const.sc_names.append('PSP_Orbit.csv')
     const.sc_names.append('Wind_Outside_Range_Hour.csv')
     const.sc_names.append('Wind_Outside_Range_Min.csv')
+    const.sc_names.append('Wind_Temps.csv')
 
     const.num_of_sc = len(const.sc_names)
 
@@ -122,6 +123,7 @@ def const(
     const.sc_units[3] = const.sc_units[1]
     const.sc_units[4] = [0, 9, 9, 9, 9, 9, 9, 9, 9, 2, 10, 10, 2, 11, 14, 12, 13, 11, 11,
                          11]
+    const.sc_units[5] = [0, 1, 4, 1, 4]
 
     const.var_max = [(10 ** 30), density_max, speed_max, b_field_max, temp_max,
                      chi_squared_max, dr_max, dv_max, dT_perp_max, bmag_max, v_gse_max,
@@ -134,21 +136,20 @@ def const(
     # ------------------------------------#
 
     const.title_size = 30
-    const.label_size = 24
-    const.tick_size = 22
-    const.legend_size = 20
+    const.label_size = 16
+    const.tick_size = 18
+    const.legend_size = 12
     const.font_family = 'sans-serif'
 
     const.transparent = 0.0  # 0-1
-    const.pdf_smooth = 20
-    const.arg_smooth = 20
+    const.pdf_smooth = 1
+    const.arg_smooth = 1
 
-    const.bin_width = 0.02
+    const.bin_width = 0.1
 
     const.dp_number = 1     # max 3 dp
     const.predict = True
     const.R = 0.1
-    const.wind_radius = 0.3
 
     const.y_tick = 0.8
 
@@ -159,10 +160,6 @@ def const(
     if const.R > 0.21:
         raise ValueError(
             f"R must be smaller than the largest radius in the data set"
-        )
-    if const.wind_radius < 0.19:
-        raise ValueError(
-            f"Wind must have a distance greater than PSP"
         )
 
     return message

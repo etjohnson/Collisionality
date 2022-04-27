@@ -9,8 +9,8 @@ from core import tictoc as tt
 
 from features import latlong as lalo
 from features import gen_scalars as sc_gen
-from features.smooth import smooth
 from features import graph_gen
+from features import errors
 
 from misc import fit as fit
 
@@ -225,7 +225,7 @@ else:
 print('Generating velocity magnitudes...')
 scalar_velocity = sc_gen.scalar_velocity(solar_data)
 print('Generating temperature file...', '\n')
-scalar_temps = sc_gen.scalar_temps(solar_data)
+scalar_temps, wind_scalar_temps = sc_gen.scalar_temps(solar_data, spc_data)
 
 # Generate single time set for the whole data set in appropriate unit
 time = []
@@ -234,14 +234,30 @@ for i in range(len(solar_data[p]['time'])):
 print('Note: Files have been generated and loaded in.', '\n')
 
 theta = scalar_temps['theta_ap']
-data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps)
-graph_gen.graph_function(theta, data_norm)
+p_var, a_var = errors.gen_uncer(error_data)
+print('Proton uncertainty: ', p_var, '%. Alpha uncertainty: ', a_var, '%.')
 
-solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
+#data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
+#arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
+#errors.graph_gen(arg_)
 
-print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
-theta_predict = graph_gen.make_theta_vals(solar_sort[const.R], spc_sort[const.R], temp_sort[const.R])
-graph_gen.graph_function(theta, theta_predict, str(const.R))
+#graph_gen.graph_function(theta, data_norm, '0.1-0.2', '0.3')
+
+#solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
+#print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
+
+theta_predict = {}
+r_ = [0.3, 0.5, 1.0]
+i = 0
+for radius in r_:
+    i = i + 1
+    theta_predict[radius] = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, radius)
+    #theta_predict[radius] = graph_gen.make_theta_vals(solar_sort[const.R], spc_sort[const.R], temp_sort[const.R], radius)
+    print(f"{(i / len(r_)) * 100:.2f} %", end="\r")
+
+wind_theta = wind_scalar_temps['wind_theta']
+
+graph_gen.graph_multi_function(wind_theta, theta_predict, str(const.R))
 
 
 tt.toc()

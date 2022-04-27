@@ -5,6 +5,7 @@ from core.constants import const
 
 def scalar_temps(
         data,
+        spc_data,
 ):
     key_names = {}
     file_names = []
@@ -67,7 +68,33 @@ def scalar_temps(
 
     result['time'] = data[proton]['time']
 
-    return result
+    wind_result_keys = ['wind_alpha_scalar_temp', 'wind_proton_scalar_temp', 'wind_theta']
+    wind_result = {}
+
+    for i in range(len(wind_result_keys)):
+        wind_result[wind_result_keys[i]] = np.zeros(len(spc_data['Wind_Temps.csv']['time']))
+
+    for i in range(len(spc_data['Wind_Temps.csv']['time'])):
+        arg_ = spc_data['Wind_Temps.csv']['TEMP_ALPHA_S/C_eV'][i]
+
+        if arg_ == 0:
+            wind_result[wind_result_keys[0]][i] = 10**6
+        else:
+            wind_result[wind_result_keys[0]][i] = arg_
+
+        wind_result[wind_result_keys[1]][i] = spc_data['Wind_Temps.csv']['TEMP_PROTN_S/C_eV'][i]
+
+        wind_result['wind_theta'][i] = spc_data['Wind_Temps.csv']['TEMP_ALPHA_S/C_eV'][i]/spc_data['Wind_Temps.csv']['TEMP_PROTN_S/C_eV'][i]
+
+    for i in range(len(wind_result['wind_theta'])):
+        if wind_result['wind_theta'][i] > 15:
+            wind_result['wind_theta'][i] = 15
+        elif wind_result['wind_theta'][i] < 0:
+            wind_result['wind_theta'][i] = 0
+        else:
+            pass
+
+    return result, wind_result
 
 
 def scalar_velocity(
