@@ -73,6 +73,7 @@ def graph_gen(
 
 def gen_uncer(
         error_data,
+        scalar_temps,
 ):
     p = 'proton'
     a = 'alpha'
@@ -85,22 +86,22 @@ def gen_uncer(
         interval[i] = int(i + 1)
 
     sig_proton = error_data[p]['dT1_perp']
+    chi_proton = error_data[p]['chi_squared']
     sig_alpha = error_data[a]['dT_perp']
+    chi_alpha = error_data[a]['chi_squared']
 
-    sig_tot_p = 0
-    sig_tot_a = 0
+    sp_av = sum(sig_proton)/len(sig_proton)
+    sa_av = sum(sig_alpha) / (len(sig_alpha))
+    cp_av = sum(chi_proton)/len(chi_proton)
+    ca_av = sum(chi_alpha)/(len(chi_alpha))
 
-    for i in range(max_interval):
-        sig_tot_a = sig_tot_a + sig_alpha[i]
-        sig_tot_p = sig_tot_p + sig_proton[i]
+    temp_p_av = sum(scalar_temps['proton_scalar_temp_1'])/len(scalar_temps['proton_scalar_temp_1'])
+    temp_a_av = sum(scalar_temps['alpha_scalar_temp'])/len(scalar_temps['alpha_scalar_temp'])
+    
+    sp = (sp_av/temp_p_av)*10**2
+    sa = (sa_av/temp_a_av)*10**2
 
-    sp = (sig_tot_p/max_interval)
-    sa = (sig_tot_a/max_interval)
-
-    sp = round(sp*100, 2)
-    sa = round(sa*10, 2)
-
-    return sp, sa
+    return round(sp, 3), round(sa, 3)
 
 
 def graph_percent(

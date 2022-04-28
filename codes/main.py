@@ -234,7 +234,7 @@ for i in range(len(solar_data[p]['time'])):
 print('Note: Files have been generated and loaded in.', '\n')
 
 theta = scalar_temps['theta_ap']
-p_var, a_var = errors.gen_uncer(error_data)
+p_var, a_var = errors.gen_uncer(error_data, scalar_temps)
 print('Proton uncertainty: ', p_var, '%. Alpha uncertainty: ', a_var, '%.')
 
 #data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
