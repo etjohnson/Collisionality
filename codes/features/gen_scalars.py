@@ -27,7 +27,7 @@ def scalar_temps(
 
     result = {}
     result_keys = ['proton_scalar_temp_1', 'proton_scalar_temp_2', 'alpha_scalar_temp', 'theta_ap', 'dens_ap',
-                   'proton_perpar', 'alpha_perpar', 'proton_1_k', 'alpha_k','time']
+                   'proton_perpar', 'alpha_perpar', 'proton_1_k', 'alpha_k','time','proton_R', 'alpha_R']
 
     result[result_keys[0]] = np.zeros(length[0])
     result[result_keys[1]] = np.zeros(length[0])
@@ -39,6 +39,8 @@ def scalar_temps(
 
     result['proton_1_k'] = np.zeros(length[0])
     result['alpha_k'] = np.zeros(length[1])
+    result['proton_R'] = np.zeros(length[0])
+    result['alpha_R'] = np.zeros(length[1])
 
     for i in range(length[0]):
         val = 'Tperp1'
@@ -46,12 +48,14 @@ def scalar_temps(
         result[result_keys[1]][i] = ((2 * data[proton]['Tperp2'][i] + data[proton]['Trat2'][i]) / 3)
         result[result_keys[5]][i] = data[proton][val][i] / data[proton]['Trat1'][i]
         result['proton_1_k'][i] = result[result_keys[0]][i] * factor
+        result['proton_R'][i] = data[proton][val][i]/data[proton]['Trat1'][i]
 
     for i in range(length[1]):
         result[result_keys[2]][i] = (2 * data[alpha]['Ta_perp'][i] + data[alpha]['Trat'][i]) / 3
         result[result_keys[3]][i] = result[result_keys[2]][i] / result[result_keys[0]][i]
         result[result_keys[6]][i] = data[alpha]['Ta_perp'][i] / data[alpha]['Trat'][i]
         result['alpha_k'][i] = result[result_keys[2]][i] * factor
+        result['alpha_R'][i] = data[alpha]['Ta_perp'][i]/data[alpha]['Trat'][i]
 
         if data[proton]['np1'][i] == 0:
             result[result_keys[4]][i] = 0

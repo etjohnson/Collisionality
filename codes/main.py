@@ -238,8 +238,9 @@ p_var, a_var = errors.gen_uncer(error_data, scalar_temps)
 print('Proton uncertainty: ', p_var, '%. Alpha uncertainty: ', a_var, '%.')
 
 #data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
-#arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
-#errors.graph_gen(arg_)
+arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
+print(arg_)
+errors.graph_gen(arg_)
 
 #graph_gen.graph_function(theta, data_norm, '0.1-0.2', '0.3')
 
