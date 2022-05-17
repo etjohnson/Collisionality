@@ -1,11 +1,10 @@
-import sys
-import os.path
 import numpy as np
 
 from core.constants import const
 from core.scrub import scrub
 from core import data_import as df
 from core import tictoc as tt
+from core.graph import graph
 
 from features import latlong as lalo
 from features import gen_scalars as sc_gen
@@ -17,17 +16,17 @@ from misc import fit as fit
 tt.tic()
 p = 'proton'
 a = 'alpha'
-valid_enc = [6, 7]
+valid_enc = [4, 6, 7]
 print('Current loaded encounters:', valid_enc, '\n')
 
 # Choose which data set(s) to work with
 h = 1
 while h > 0:
     val = input('Full data set or single data set? (F/S)')
-    if (val == 'F' or val == 'f'):
+    if val == 'F' or val == 'f':
         enc = 0
         h = 0
-    elif (val == 'S' or val == 's'):
+    elif val == 'S' or val == 's':
         h = 0
         g = 1
         while g > 0:
@@ -38,17 +37,17 @@ while h > 0:
             except ValueError:
                 value_int = False
 
-            if value_int == True:
-                if (int(value) in valid_enc):
+            if value_int:
+                if int(value) in valid_enc:
                     enc = value
                     g = 0
                 else:
                     print('Error: Please enter a valid encounter. \n')
-            elif value_int == False:
+            elif not value_int:
                 print('Error: Please enter a valid integer. \n')
             else:
                 print('Error: Could not determine if the input was an integer.')
-    elif (val == ''):
+    elif val == '':
         print('Error: No input received. \n')
     else:
         print('Error: Please make a valid selection.')
@@ -118,14 +117,14 @@ for x in const.encounter:
         for z in er_data[x][y].keys():
             fp = er_data[x][y][z]
             er_data[x][y][z] = np.interp(t_, xp, fp)
-
+    print(sc_data)
     for y in sc_data[x].keys():
         xp = sc_data[x][y]['time']
         for z in sc_data[x][y].keys():
             fp = sc_data[x][y][z]
             sc_data[x][y][z] = np.interp(t_, xp, fp)
 
-# Combine files if nessesory
+# Combine files if needed
 print('Generating data file...', '\n')
 solar_data = {}
 error_data = {}
@@ -159,18 +158,22 @@ for x in range(dum_len):
     for y in range(1):
         for z in solar_data[p].keys():
             for w in range(len(mm_data[encount][const.encounter_names[y + 2 * x]][z])):
-                solar_data[p][z].append(mm_data[encount][const.encounter_names[y + 2 * x]][z][w])
+                solar_data[p][z].append(
+                    mm_data[encount][const.encounter_names[y + 2 * x]][z][w])
         for z in solar_data[a].keys():
             for w in range(len(mm_data[encount][const.encounter_names[2 * x + 1]][z])):
-                solar_data[a][z].append(mm_data[encount][const.encounter_names[2 * x + 1]][z][w])
+                solar_data[a][z].append(
+                    mm_data[encount][const.encounter_names[2 * x + 1]][z][w])
 
     for y in range(1):
         for z in error_data[p].keys():
             for w in range(len(er_data[encount][const.encounter_errors[y + 2 * x]][z])):
-                error_data[p][z].append(er_data[encount][const.encounter_errors[y + 2 * x]][z][w])
+                error_data[p][z].append(
+                    er_data[encount][const.encounter_errors[y + 2 * x]][z][w])
         for z in error_data[a].keys():
             for w in range(len(er_data[encount][const.encounter_errors[2 * x + 1]][z])):
-                error_data[a][z].append(er_data[encount][const.encounter_errors[2 * x + 1]][z][w])
+                error_data[a][z].append(
+                    er_data[encount][const.encounter_errors[2 * x + 1]][z][w])
 
     for y in const.sc_names:
         for z in spc_data[y].keys():
@@ -187,7 +190,8 @@ if const.scrub == True:
         for y in solar_data[x].keys():
             k = k + 1
             val = const.data_units[l][k]
-            solar_data[x][y] = scrub(solar_data[x][y], const.var_min[val], const.var_max[val])
+            solar_data[x][y] = scrub(solar_data[x][y], const.var_min[val],
+                                     const.var_max[val])
         print(f"{(l / len(solar_data)) * 100:.2f} %", end="\r")
         k = -1
     m = -1
@@ -215,8 +219,10 @@ if const.scrub == True:
             spc_data[x][y] = scrub(spc_data[x][y], const.var_min[val], const.var_max[val])
         print(f"{(m / len(spc_data)) * 100:.2f} %", end="\r")
         n = -1
-    sc_data[encount][const.sc_names[0]] = lalo.latlong_psp(sc_data[encount][const.sc_names[0]])
-    sc_data[encount][const.sc_names[1]] = lalo.latlong_psp(sc_data[encount][const.sc_names[1]])
+    sc_data[encount][const.sc_names[0]] = lalo.latlong_psp(
+        sc_data[encount][const.sc_names[0]])
+    sc_data[encount][const.sc_names[1]] = lalo.latlong_psp(
+        sc_data[encount][const.sc_names[1]])
     print('Data Scrub Complete', '\n')
 else:
     print('Note: Data scrub suppressed.', '\n')
@@ -225,7 +231,7 @@ else:
 print('Generating velocity magnitudes...')
 scalar_velocity = sc_gen.scalar_velocity(solar_data)
 print('Generating temperature file...', '\n')
-scalar_temps, wind_scalar_temps = sc_gen.scalar_temps(solar_data, spc_data)
+psp_scalar_temps, wind_scalar_temps = sc_gen.scalar_temps(solar_data, spc_data)
 
 # Generate single time set for the whole data set in appropriate unit
 time = []
@@ -233,32 +239,36 @@ for i in range(len(solar_data[p]['time'])):
     time.append(df.epoch_time(solar_data[p]['time'][i]))
 print('Note: Files have been generated and loaded in.', '\n')
 
-theta = scalar_temps['theta_ap']
-p_var, a_var = errors.gen_uncer(error_data, scalar_temps)
-print('Proton uncertainty: ', p_var, '%. Alpha uncertainty: ', a_var, '%.')
+# time, solar_data, spc_data,
+theta_ap_0 = psp_scalar_temps['theta_ap']
+# ---#
 
-#data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
-arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
-print(arg_)
-errors.graph_gen(arg_)
+mean_sd = errors.gen_uncer(error_data, psp_scalar_temps)
+graph(time, mean_sd, degree=50, limits=True, x_lim=time[len(time)-1], y_lim=250)
 
-#graph_gen.graph_function(theta, data_norm, '0.1-0.2', '0.3')
+# data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
+# arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
+# print(arg_)
+# errors.graph_gen(arg_)
 
-#solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
-#print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
+# theta_final = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 1)
+# graph_gen.graph_function(theta, theta_final, '0.1-0.2', '1.0')
 
-theta_predict = {}
-r_ = [0.3, 0.5, 1.0]
-i = 0
-for radius in r_:
-    i = i + 1
-    theta_predict[radius] = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, radius)
-    #theta_predict[radius] = graph_gen.make_theta_vals(solar_sort[const.R], spc_sort[const.R], temp_sort[const.R], radius)
-    print(f"{(i / len(r_)) * 100:.2f} %", end="\r")
+# solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
+# print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
 
-wind_theta = wind_scalar_temps['wind_theta']
+# theta_predict = {}
+# r_ = [0.3, 0.5, 1.0]
+# i = 0
+# for radius in r_:
+#    i = i + 1
+#    theta_predict[radius] = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, radius)
+# theta_predict[radius] = graph_gen.make_theta_vals(solar_sort[const.R], spc_sort[const.R], temp_sort[const.R], radius)
+#    print(f"{(i / len(r_)) * 100:.2f} %", end="\r")
 
-graph_gen.graph_multi_function(wind_theta, theta_predict, str(const.R))
+# wind_theta = wind_scalar_temps['wind_theta']
+
+# graph_gen.graph_multi_function(wind_theta, theta_predict, str(const.R))
 
 
 tt.toc()

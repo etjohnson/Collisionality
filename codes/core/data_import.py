@@ -40,15 +40,6 @@ def file_import(
         load_location,
         str_dir='',
 ):
-    r"""
-    Input: Load location, string directory.
-
-    Return: Data from file loaded into an array.
-    """
-
-    # ---#
-
-    # ---#
 
     for arg_name in ("load_location", "str_dir"):
         val = locals()[arg_name]

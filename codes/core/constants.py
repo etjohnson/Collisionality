@@ -140,18 +140,19 @@ def const(
     const.tick_size = 18
     const.legend_size = 12
     const.font_family = 'sans-serif'
+    const.line_width = 2
 
     const.transparent = 0.0  # 0-1
-    const.pdf_smooth = 1
-    const.arg_smooth = 1
+    const.pdf_smooth = 2
+    const.arg_smooth = 2
 
-    const.bin_width = 0.1
+    const.bin_width = 0.2
 
     const.dp_number = 1     # max 3 dp
     const.predict = True
     const.R = 0.1
 
-    const.y_tick = 0.8
+    const.y_tick = 1
 
     # ------------------------------------#
 
