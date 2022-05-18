@@ -81,6 +81,5 @@ def theta_ap_0(r_0, r_1, n_p_1, eta_ap, v_p_1, t_p_1, theta_ap_1,
         else:
             theta_ap = min([theta_ap, theta_ap_max])
 
-    # Return.
 
     return theta_ap

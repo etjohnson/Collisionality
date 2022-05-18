@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 from core.constants import const
+from core.load import file_import as fimp
 
 
 def encounter_import(
@@ -14,8 +15,7 @@ def encounter_import(
         files[const.encounter[i]] = {}
         for j in range(2):
             val = str(const.encounter[i] + '/' + const.encounter_names[j + 2 * i])
-            files[const.encounter[i]][const.encounter_names[j + 2 * i]] = file_import(val,
-                                                                                      const.str_dir)
+            files[const.encounter[i]][const.encounter_names[j + 2 * i]] = fimp.file_import(const.str_dir + val)
     return files
 
 
@@ -29,34 +29,12 @@ def sc_import(
         files[const.encounter[i]] = {}
         for key in const.sc_names:
             val = str(const.encounter[i] + '/Position/' + key)
-            files[const.encounter[i]][key] = file_import(val, const.str_dir)
+            files[const.encounter[i]][key] = fimp.file_import(const.str_dir + val)
     print('\n',
           'Warning: Please ensure all data is in the correct time range for the encounter.',
           '\n')
     return files
 
-
-def file_import(
-        load_location,
-        str_dir='',
-):
-
-    for arg_name in ("load_location", "str_dir"):
-        val = locals()[arg_name]
-        if not isinstance(arg_name, str):
-            raise ValueError(
-                f"Argument '{val}' should be a string,"
-                f"instead got '{val.type}'."
-            )
-
-    print(str_dir + load_location)
-
-    data = pd.read_csv(str_dir + load_location)
-    result = {}
-    for key in data.keys():
-        result[key] = np.array(data[key])
-
-    return result
 
 
 def epoch_time(
@@ -78,7 +56,5 @@ def error_import(
         files[const.encounter[i]] = {}
         for j in range(2):
             val = str(const.encounter[i] + '/' + const.encounter_errors[j + 2 * i])
-            files[const.encounter[i]][const.encounter_errors[j + 2 * i]] = file_import(
-                val,
-                const.str_dir)
+            files[const.encounter[i]][const.encounter_errors[j + 2 * i]] = fimp.file_import(const.str_dir + val)
     return files

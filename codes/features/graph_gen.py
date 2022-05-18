@@ -23,7 +23,13 @@ def graph_function(
 
     X = np.linspace(0, 15, 1000)
 
+    for i in range(len(theta_vals)):
+        if not isinstance(theta_vals[i], float):
+            theta_vals[i] = 0
+
     arg_ = smooth(theta_vals, const.arg_smooth)
+
+    print(max(arg_),'c', min(arg_),'c', arg_[0])
 
     bins = int((max(arg_) - min(arg_)) / const.bin_width)
 
@@ -97,10 +103,11 @@ def theta_loop(
         theta,
 ):
     final_theta = np.zeros(len(time))
-    for i in range(int(len(time))):
+    for i in range(int(len(time)*0.02)):
         final_theta[i] = the_rad.theta_ap_0(wind_radius[i], psp_radius[i], density_p[i],
                                             density_ap[i], speed[i],
                                             temp[i], theta[i])
+        #print(i/len(time))
         print(f"{(i / len(time)) * 100:.2f} %", end="\r")
 
     return final_theta

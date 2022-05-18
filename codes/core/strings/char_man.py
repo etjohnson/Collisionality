@@ -89,6 +89,7 @@ def join_w_space(
 
     return string_c
 
+
 def join_wo_space(
         string_a,
         string_b,
@@ -114,7 +115,7 @@ def add_to_end(
             f" got {string.type}, and string_b got {addition.type}."
         )
 
-    result = ''.join([string, addition])
+    result = string + addition
 
     return result
 
@@ -129,6 +130,19 @@ def add_to_begin(
             f" got {string.type}, and string_b got {addition.type}."
         )
 
-    result = ''.join([addition, addition])
+    result = addition + string
+
+    return result
+
+def remove_end(
+        string,
+):
+    if not isinstance(string, str):
+        raise ValueError(
+            "Argument passed is a not string, instead "
+            f" got {string.type}."
+        )
+    l = len(string)
+    result = string[:l-1]
 
     return result

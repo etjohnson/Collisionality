@@ -117,7 +117,7 @@ for x in const.encounter:
         for z in er_data[x][y].keys():
             fp = er_data[x][y][z]
             er_data[x][y][z] = np.interp(t_, xp, fp)
-    print(sc_data)
+
     for y in sc_data[x].keys():
         xp = sc_data[x][y]['time']
         for z in sc_data[x][y].keys():
@@ -241,18 +241,22 @@ print('Note: Files have been generated and loaded in.', '\n')
 
 # time, solar_data, spc_data,
 theta_ap_0 = psp_scalar_temps['theta_ap']
+
 # ---#
 
 mean_sd = errors.gen_uncer(error_data, psp_scalar_temps)
-graph(time, mean_sd, degree=50, limits=True, x_lim=time[len(time)-1], y_lim=250)
+graph(time, mean_sd, degree=50, limits=True, x_lim=time[len(time)-1], y_lim=250, title='Average sigma against time', x_axis='Time', y_axis='Average Sigma')
 
 # data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
 # arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
 # print(arg_)
 # errors.graph_gen(arg_)
 
-# theta_final = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 1)
-# graph_gen.graph_function(theta, theta_final, '0.1-0.2', '1.0')
+
+#theta_ap_final = graph_gen.make_theta_vals(solar_data, spc_data, psp_scalar_temps, 1)
+#print('cunt')
+#print(theta_ap_final)
+#graph_gen.graph_function(theta_ap_0, theta_ap_final, '0.1-0.2', '1.0')
 
 # solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
 # print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
