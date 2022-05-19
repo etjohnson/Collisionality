@@ -2,20 +2,15 @@ import os
 import pathlib
 import pandas as pd
 import numpy as np
-from core.strings import char_man as cm
+from file_types import types
+
+
 import csv
 
-valid_file_types = ['csv', 'xlsx', 'pkl']
-valid_read_types = ['_csv', '_excel', '_pickle']
+res = types()
+print(res)
+valid_file_types = types.valid_file_types
 
-
-def dir_path(
-
-):
-    directory = os.getcwd()
-    path = str(pathlib.Path(directory).parent)
-
-    return path
 
 
 def file_import(
