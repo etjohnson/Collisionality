@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 from core.constants import const
-from core.load import file_import as fimp
+from core.rw import file_import as fimp
 
 
 def encounter_import(

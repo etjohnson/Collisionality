@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import random
 import numpy as np
 import warnings
-from core.strings import char_man
+from core.variables import char_man
 
 
 def graph(
