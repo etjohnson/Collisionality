@@ -224,9 +224,16 @@ def slash_check(
             f"instead got {type(string)}"
         )
 
-    if string.endswith("/"):
+    if string.endswith("/") or string.endswith(r"\/"):
         res = string
     else:
-        res = jws(string, '/')
-
+        if '/' in string:
+            res = jws(string, '/')
+        elif r"\/" in string:
+            res = jws(string, r"\/")
+        else:
+            raise ValueError(
+                "Error: No slash in string."
+            )
+        
     return res
