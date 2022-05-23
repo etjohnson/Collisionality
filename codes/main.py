@@ -9,7 +9,7 @@ from core.graph import graph
 from features import latlong as lalo
 from features import gen_scalars as sc_gen
 from features import graph_gen
-from features import errors
+
 
 from misc import fit as fit
 
@@ -244,19 +244,19 @@ theta_ap_0 = psp_scalar_temps['theta_ap']
 
 # ---#
 
-time_e, e_p, e_a = errors.gen_uncer(solar_data, error_data, psp_scalar_temps)
-print(time, e_p, e_a)
-graph(time_e, e_p, degree=50, title='Average sigma against time', x_axis='Time', y_axis='Average Sigma')
+#time_e, e_p, e_a = errors.gen_uncer(solar_data, error_data, psp_scalar_temps)
+#print(time, e_p, e_a)
+#graph(time_e, e_p, degree=50, title='Average sigma against time', x_axis='Time', y_axis='Average Sigma')
 
-# data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
-# arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
+#data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
+#arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
 # print(arg_)
-# errors.graph_gen(arg_)
+#errors.graph_gen(arg_)
 
 
-#theta_ap_final = graph_gen.make_theta_vals(solar_data, spc_data, psp_scalar_temps, 1)
-#print(theta_ap_final)
-#graph_gen.graph_function(theta_ap_0, theta_ap_final, '0.1-0.2', '1.0')
+theta_ap_final = graph_gen.make_theta_vals(solar_data, spc_data, psp_scalar_temps, 0.5)
+
+graph_gen.graph_function(theta_ap_0, theta_ap_final, '0.1-0.2', '0.5')
 
 # solar_sort, spc_sort, temp_sort = graph_gen.radius_split(solar_data, spc_data, scalar_temps)
 # print('Generation Values: Decimal point = ' + str(const.dp_number) + ', Radius = ' + str(const.R))
@@ -273,6 +273,9 @@ graph(time_e, e_p, degree=50, title='Average sigma against time', x_axis='Time',
 # wind_theta = wind_scalar_temps['wind_theta']
 
 # graph_gen.graph_multi_function(wind_theta, theta_predict, str(const.R))
+
+import matplotlib.font_manager
+print(matplotlib.font_manager.findSystemFonts(fontpaths=None, fontext='ttf'))
 
 
 tt.toc()

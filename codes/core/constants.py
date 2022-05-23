@@ -138,8 +138,8 @@ def const(
     const.title_size = 30
     const.label_size = 16
     const.tick_size = 18
-    const.legend_size = 12
-    const.font_family = 'sans-serif'
+    const.legend_size = 20
+    const.font_family = 'Courier New'
     const.line_width = 2
 
     const.transparent = 0.0  # 0-1

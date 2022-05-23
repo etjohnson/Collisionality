@@ -29,28 +29,29 @@ def graph_function(
 
     arg_ = smooth(theta_vals, const.arg_smooth)
 
-    print(max(arg_),'c', min(arg_),'c', arg_[0])
-
     bins = int((max(arg_) - min(arg_)) / const.bin_width)
 
     hist = np.histogram(arg_, bins=bins)
     hist_dist = scipy.stats.rv_histogram(hist)
 
     plt.figure(figsize=(const.x_dim, const.y_dim))
+    val = int(((const.x_dim + const.y_dim) / 2))
+    plt.tight_layout(pad=val * 0.7)
     plt.hist(arg_, density=True, bins=bins, alpha=const.transparent)
     plt.plot(X, smooth(hist_dist.pdf(X), const.pdf_smooth),
              label=r'$\theta_{\alpha p}(' + r_value + r'\, {\rm AU})$',
              color='black', linewidth=3)
     plt.legend(loc='upper right', prop={'size': const.legend_size})
-    plt.title(r'Histogram of $\alpha$-proton relative temperatures',
+    plt.title(r'Histogram of $\alpha$-Proton Relative Temperatures',
               fontsize=const.title_size,
               fontname=const.font_family)
-    plt.ylabel('Probability density', fontsize=const.label_size,
+    plt.ylabel('Probability Density', fontsize=const.label_size,
                fontname=const.font_family)
-    plt.xlabel(r'$\alpha$-proton relative temperature', fontsize=const.label_size,
+    plt.xlabel(r'$\alpha$-Proton Relative Temperature', fontsize=const.label_size,
                fontname=const.font_family)
     plt.xticks(fontsize=const.tick_size)
     plt.yticks(fontsize=const.tick_size)
+
     plt.xlim([0, 15])
     plt.ylim([0, const.y_tick])
     plt.grid()
@@ -103,11 +104,10 @@ def theta_loop(
         theta,
 ):
     final_theta = np.zeros(len(time))
-    for i in range(int(len(time)*0.02)):
+    for i in range(int(len(time))):
         final_theta[i] = the_rad.theta_ap_0(wind_radius[i], psp_radius[i], density_p[i],
                                             density_ap[i], speed[i],
                                             temp[i], theta[i])
-        #print(i/len(time))
         print(f"{(i / len(time)) * 100:.2f} %", end="\r")
 
     return final_theta
