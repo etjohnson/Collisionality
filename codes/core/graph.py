@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import random
 import numpy as np
 import warnings
-from core.variables import char_man
+from core.variables import char_man as cm
 
 
 def graph(
@@ -29,7 +29,7 @@ def graph(
     x_0 = x_data[0]
     y_0 = 0
     if isinstance(y_data, (list, np.ndarray)):
-        plt.plot(x_data, y_data, label=char_man.capital_first_letter(label), color='black', linewidth=const.line_width)
+        plt.plot(x_data, y_data, label=cm.capital_first_letter(label), color='black', linewidth=const.line_width)
     elif isinstance(y_data, dict):
         y_labels = []
         for key in y_data.keys():
@@ -38,7 +38,7 @@ def graph(
             r = random.random()
             g = random.random()
             b = random.random()
-            plt.plot(x_data, y_data[y_labels[i]], label=char_man.capital_first_letter(y_labels[i]), color=(r, g, b),
+            plt.plot(x_data, y_data[y_labels[i]], label=cm.capital_first_letter(y_labels[i]), color=(r, g, b),
                      linewidth=const.line_width)
     else:
         raise ValueError(

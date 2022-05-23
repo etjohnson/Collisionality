@@ -16,7 +16,7 @@ from misc import fit as fit
 tt.tic()
 p = 'proton'
 a = 'alpha'
-valid_enc = [4, 6, 7]
+valid_enc = [6, 7]
 print('Current loaded encounters:', valid_enc, '\n')
 
 # Choose which data set(s) to work with
@@ -244,8 +244,9 @@ theta_ap_0 = psp_scalar_temps['theta_ap']
 
 # ---#
 
-mean_sd = errors.gen_uncer(error_data, psp_scalar_temps)
-graph(time, mean_sd, degree=50, limits=True, x_lim=time[len(time)-1], y_lim=250, title='Average sigma against time', x_axis='Time', y_axis='Average Sigma')
+time_e, e_p, e_a = errors.gen_uncer(solar_data, error_data, psp_scalar_temps)
+print(time, e_p, e_a)
+graph(time_e, e_p, degree=50, title='Average sigma against time', x_axis='Time', y_axis='Average Sigma')
 
 # data_norm = graph_gen.make_theta_vals(solar_data, spc_data, scalar_temps, 0.3)
 # arg_ = errors.gen_sd(solar_data, error_data, spc_data, scalar_temps)
@@ -254,7 +255,6 @@ graph(time, mean_sd, degree=50, limits=True, x_lim=time[len(time)-1], y_lim=250,
 
 
 #theta_ap_final = graph_gen.make_theta_vals(solar_data, spc_data, psp_scalar_temps, 1)
-#print('cunt')
 #print(theta_ap_final)
 #graph_gen.graph_function(theta_ap_0, theta_ap_final, '0.1-0.2', '1.0')
 
