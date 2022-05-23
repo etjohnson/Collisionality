@@ -1,6 +1,6 @@
 import os
 import pathlib
-from ..variables import char_man as cm
+from ..variables import string_man as sm
 
 
 def dir_path(
@@ -25,7 +25,7 @@ def dir_make(
             f"instead got {type(name)}"
         )
 
-    path = cm.slash_check(loc) + name  # jws
+    path = sm.slash_check(loc) + name  # jws
 
     os.mkdir(path)
 
@@ -35,7 +35,7 @@ def dir_make(
 def file_list(
         loc=parent_path,
 ):
-    path = cm.slash_check(loc)
+    path = sm.slash_check(loc)
     res = next(os.walk(path))[2]
 
     return res
@@ -53,7 +53,7 @@ def file_num(
 def folder_list(
         loc=parent_path,
 ):
-    path = cm.slash_check(loc)
+    path = sm.slash_check(loc)
     res = next(os.walk(path))[1]
 
     return res
@@ -71,7 +71,7 @@ def folder_num(
 def dir_list(
         loc=parent_path,
 ):
-    path = cm.slash_check(loc)
+    path = sm.slash_check(loc)
     res = os.listdir(path)
 
     return res
